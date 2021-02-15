@@ -1,0 +1,12 @@
+DT = 0.1;
+U = 0.1;
+alpha = 0.4;
+N = 20;
+t = linspace(0,60,N);
+
+X = zeros(20, 3);
+X(1,:) = [10000,100,0];
+for i = 1:N
+    X(i,:) = RK4_Integrator(SIR(0, X(i-1,:)', alpha, U);
+end
+plot(t, 

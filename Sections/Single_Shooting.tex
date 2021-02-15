@@ -83,13 +83,22 @@ Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
  \label{alg:SingleShooting_Integration_IPOPT}
 \end{algorithm}
 \subsubsection{Results}
-Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields the following results:
+Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:SH_Traj_IPOPT} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_IPOPT}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{pythonProject/Figures/Variational_Sensitivities.eps}
-    \caption{Caption}
-    \label{fig:Trajectories for the Single}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Single_Shooting_Trajectory_IPOPT.eps}
+    \caption{Trajectories with single shooting using IPOPT}
+    \label{fig:SH_Traj_IPOPT}
 \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Single_Shooting_obj_con_IPOPT.eps}
+    \caption{Bounds multipliers and objective values for single shooting using IPOPT}
+    \label{fig:SH_con_obj_IPOPT}
+\end{figure}
+
+
 
 \subsection{CasADI-Implementation using }

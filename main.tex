@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{mathrsfs}
+\title{Numerical Optimization}
+\author{jonashj }
+\date{January 2021}
+\usepackage{optidef}
+\usepackage{listings}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{float}
+\newcommand{\bm}[1]{\boldsymbol{#1}}
+
+\usepackage[backend = biber,    % Recommended backend for sorting bibliography
+            style = authoryear-comp,    % Close to the 'Harvard' referencing style
+            urldate = long,     % Long: 24th Mar. 1997 | Short: 24/03/1997
+            maxcitenames = 2,   % Number of authors in cite before replaced with 'Author#1 et al.'
+            ]{biblatex}
+\usepackage[ruled,vlined]{algorithm2e}
+\addbibresource{references.bib}     % Adding our file containing the references
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\begin{document}
+
+
+\maketitle
+\include{Sections/SIR_Model}
+\include{Sections/Integrator}
+\include{Sections/Single_Shooting}
+\include{Sections/Multiple_Shooting}
+\include{Sections/PMP}
+
+\end{document}

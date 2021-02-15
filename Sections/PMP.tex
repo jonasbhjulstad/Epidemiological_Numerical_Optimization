@@ -1,0 +1,50 @@
+\section{Pontryagin's Maximum Principle}
+Optimal control with PMP will consider the continous formulation of the control problem:
+\begin{mini*}|s|
+{w}{\int_{t=0}^T I(t)^2 -W_u u(t)^2}
+{}{}
+%\addConstraint{x_f = f(x_0, u(t))}
+\addConstraint{\dot{x}(t) = F(x(t), u(t))}
+\addConstraint{u_{max} \geq u(t) \geq u_{min}, \quad \forall t \in [0, T)}{}
+\end{mini*}
+Where $F(.)$ is the SIR ODE-dynamics. The hamiltonian for the problem becomes:
+\begin{align}
+    H(x, \lambda, u) &= L(I(t), u(t)) + \lambda^T F(x(t), u(t))\\
+    = I(t)^2 - W_u &u(t)^2 + (\lambda_1 - \lambda_0)\cdot u(t)\frac{S(t)I(t)}{N_{pop}} + (\lambda_3 -\lambda_1) \alpha I(t)
+\end{align}
+Minimizing the hamiltonian every timestep will minimize the objective function. In this case it is possible to derive an unconstrained solution:
+\begin{align}
+    \argmin_u  H(u) &\rightarrow u = \pm \infty %\frac{\partial H(x, \lambda, u)}{\partial u} = 0\\
+     %u &= \frac{(\lambda_1-\lambda_0)}{2W_u}\cdot \frac{S(t)I(t)}{N_{pop}}
+\end{align}
+Constraints $u_{min} \leq u \leq u_{max}$ cannot have the same optimum. However, the concavity of hamiltonian with respect to $u$ ensures that the following holds for constrained $u_c^*(t)$:
+\begin{align}
+    u^*(t) &= \argmin_u H(x, \lambda, u)\\
+    u_c^*(t) &= \begin{cases}
+    u_{min} \mbox{ if } u^*(t) < u_{min}\\
+    u^*(t) \mbox{ if } u_{min} \leq u^*(t) \leq u_{max}\\
+    u_{max} \mbox{ if } u^*(t) > u_{max}
+    \end{cases}
+\end{align}
+
+\subsection{Single-Shooting Algorithm in CasADI}
+The analytical optimal solution for $u$ removes the need for nonlinear optimization and iterations, but CasADI's symbolical framework is still useful for constructing the integrator. 
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{$x_k = x_0, u = [u_0, \dots, u_{N-1}], h, N$}
+Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
+ \For{$i$ = 0 : $N-1$}{
+    $u^*_{c, k} = \argmin_u H(x, \lambda, u)$\\
+    $x_k$ = $f(@SIR, x_k, u^*_{c, k}, h)$\\
+ }
+ \caption{Single-shooting with PMP}
+ \label{alg:SingleShooting_Integration_PMP}
+\end{algorithm}
+
+\subsection{Simulations}
+
+
+
+
+

@@ -135,18 +135,23 @@ if __name__ == '__main__':
     u_sols = CB.x_sols
     x_sols = []
     x_plots = []
+    Q = []
+    Q_plots = []
     for i in range(N_sols):
         x_opt = [x0]
         x_plot = []
+        Q = []
         for k in range(N):
             xf, qf = F(x_opt[k], u_sols[i][k])
             x_plot.append(Fx_plot(x_opt[k], u_sols[i][k]).full())
+            Q.append(qf.full())
             x_opt += [xf.full()]
         x_plot = np.concatenate(x_plot)
         x1_opt = [r[0] for r in x_opt]
         x2_opt = [r[1] for r in x_opt]
         x3_opt = [r[2] for r in x_opt]
 
+        Q_plots.append(Q)
         x_plots.append([x_plot[0::3], x_plot[1::3], x_plot[2::3]])
         x_sols.append([x1_opt, x2_opt, x3_opt])
 
@@ -156,6 +161,7 @@ if __name__ == '__main__':
     from matplotlib import cm
     colormap = cm.get_cmap('Greys', len(x_sols))
     colors = colormap(np.linspace(.1, .8, len(x_sols)))
+
 
     fig, axs = plt.subplots(4,1)
 
@@ -197,13 +203,14 @@ if __name__ == '__main__':
     fig2, ax2 = plt.subplots(2)
 
     lam_x = np.array(CB.lam_x_sols).squeeze()
-    [ax2[0].plot(tgrid_u, lam, color=color,marker='o', linestyle='', markersize=2.5) for i, (lam, color) in enumerate(zip(lam_x, colors))]
-    ax2[1].plot(CB.f_sols, color='k', label='objective value')
+    [ax2[0].plot(tgrid_u, lam, color=color,marker='o', linestyle='-', markersize=2.5) for i, (lam, color) in enumerate(zip(lam_x, colors))]
+    [ax2[1].plot(tgrid_u, np.array(Q_plot).squeeze(), color=color) for Q_plot, color in zip(Q_plots, colors)]
 
     ax2[0].set_title(r'Multipliers for bounds on $U$')
-    fig2.subplots_adjust(hspace=.5)
+    fig2.subplots_adjust(hspace=.2)
     ax2[1].set_title(r'Objective values')
-    ax2[0].set_xlabel('time')
-    ax2[1].set_xlabel('Iteration')
+    ax2[0].set_xticklabels('')
+    ax2[0].set_xlabel('')
+    ax2[1].set_xlabel('time')
     _ = [x.grid() for x in ax2]
     fig2.savefig('../Figures/Single_Shooting_obj_con_IPOPT.eps', format='eps')

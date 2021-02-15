@@ -1,0 +1,9 @@
+alpha = 0.001;
+beta = 2;
+t = [0,40];
+
+x0 = [10000,100,0]';
+
+[T] = ode45(@(t,x)SIR(t,x,alpha, beta), t, x0);
+
+plot(T, X)

@@ -1,0 +1,201 @@
+#
+#     This file is part of CasADi.
+#
+#     CasADi -- A symbolic framework for dynamic optimization.
+#     Copyright (C) 2010-2014 Joel Andersson, Joris Gillis, Moritz Diehl,
+#                             K.U. Leuven. All rights reserved.
+#     Copyright (C) 2011-2014 Greg Horn
+#
+#     CasADi is free software; you can redistribute it and/or
+#     modify it under the terms of the GNU Lesser General Public
+#     License as published by the Free Software Foundation; either
+#     version 3 of the License, or (at your option) any later version.
+#
+#     CasADi is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#     Lesser General Public License for more details.
+#
+#     You should have received a copy of the GNU Lesser General Public
+#     License along with CasADi; if not, write to the Free Software
+#     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+#
+from casadi import *
+from Callbacks.Singleshoot import Singleshoot_CB
+from matplotlib import cm
+T = 28. # Time horizon
+N = 50 # number of control intervals
+# Declare model variables
+S = MX.sym('S')
+I = MX.sym('I')
+R = MX.sym('R')
+x = vertcat(S, I, R)
+u = MX.sym('u')
+N_pop = 5.3e6
+u_min = 0.5
+u_max = 6.5
+Wu = N_pop**2/(u_max-u_min)/100
+
+alpha = 0.2
+beta = u*alpha
+I0 = 2000
+x0 = [N_pop - I0, I0, 0]
+# Model equations
+xdot = vertcat(-beta*S*I/N_pop, beta*S*I/N_pop-alpha*I, alpha*I)
+
+# Objective term
+L = I**2 - Wu*u**2
+
+meshplot = True
+# Formulate discrete time dynamics
+
+# Fixed step Runge-Kutta 4 integrator
+M = 30 # RK4 steps per interval
+DT = T/N/M
+nx = 3
+nu = 1
+f = Function('f', [x, u], [xdot, L])
+X0 = MX.sym('X0', nx)
+U = MX.sym('U')
+X = X0
+Q = 0
+
+
+for j in range(M):
+   k1, k1_q = f(X, U)
+   k2, k2_q = f(X + DT/2 * k1, U)
+   k3, k3_q = f(X + DT/2 * k2, U)
+   k4, k4_q = f(X + DT * k3, U)
+   X+= DT/6*(k1 +2*k2 +2*k3 +k4)
+   Q += DT/6*(k1_q + 2*k2_q + 2*k3_q + k4_q)
+F = Function('F', [X0, U], [X, Q])
+
+
+# Start with an empty NLP
+w=[]
+w0 = []
+lbw = []
+ubw = []
+J = 0
+g=[]
+lbg = []
+ubg = []
+
+u0 = u_max
+
+# "Lift" initial conditions
+Xk = MX.sym('X0', 3)
+w += [Xk]
+lbw += x0
+ubw += x0
+w0 += x0
+x_min = [0,0,0]
+x_max = [N_pop, N_pop, N_pop]
+
+# Formulate the NLP
+for k in range(N):
+    # New NLP variable for the control
+    Uk = MX.sym('U_' + str(k))
+    w   += [Uk]
+    lbw += [u_min]
+    ubw += [u_max]
+    w0  += [u0]
+
+    # Integrate till the end of the interval
+    Xk_end, Qk = F(Xk, Uk)
+    J=J+Qk
+
+    # New NLP variable for state at end of interval
+    Xk = MX.sym('X_' + str(k+1), 3)
+    w   += [Xk]
+    lbw += x_min
+    ubw += x_max
+    w0  += x0
+
+    # Add equality constraint
+    g   += [Xk_end-Xk]
+    lbg += [0,0,0]
+    ubg += [0,0,0]
+
+
+opts = {}
+opts["expand"] = True
+opts["ipopt"] = {}
+opts["ipopt"]["print_level"] = 5
+
+# IPOPT_CB = IPOPT_Callback()
+# opts["ipopt"]["iteration_callback"] = IPOPT_CB
+
+iter_step = 1
+iter_file = '../data/log.opt'
+opts["ipopt"]["output_file"] = '../data/log.opt'
+opts["ipopt"]["file_print_level"] = 5
+opts["ipopt"]["print_frequency_iter"] = iter_step
+opts["ipopt"]["print_user_options"] = 'yes'
+opts["calc_f"] = True
+opts["calc_g"] = True
+
+NV = N*(nx+nu) + nx
+Ng = len(g)*nx
+
+CB = Singleshoot_CB('Singleshoot_CB', NV, Ng,1,iter_step)
+opts["iteration_callback"] = CB
+opts["iteration_callback_step"] = iter_step
+
+
+# Create an NLP solver
+prob = {'f': J, 'x': vertcat(*w), 'g': vertcat(*g)}
+solver = nlpsol('solver', 'ipopt', prob, opts)
+
+# Solve the NLP
+sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
+w_opt = sol['x'].full().flatten()
+
+w_sols = CB.x_sols
+x0_sols = [sol[0::4] for sol in w_sols]
+x1_sols = [sol[1::4] for sol in w_sols]
+x2_sols = [sol[2::4] for sol in w_sols]
+u_sols = [sol[3::4] for sol in w_sols]
+
+N_sols = len(u_sols)
+
+tgrid = [T/N*k for k in range(N+1)]
+import matplotlib.pyplot as plt
+from matplotlib import cm
+colormap = cm.get_cmap('Greys', len(w_sols))
+colors = colormap(np.linspace(.1, .8, len(w_sols)))
+
+fig, axs = plt.subplots(4,1)
+
+for i in range(0, len(w_sols), 5):
+    axs[0].plot(tgrid, x0_sols[i], '-', color = colors[i])
+    axs[1].plot(tgrid, x1_sols[i], '-', color = colors[i])
+    axs[2].plot(tgrid, x2_sols[i], '-', color = colors[i])
+    axs[3].step(tgrid, vertcat(DM.nan(1), u_sols[i]), '-.', color = colors[i])
+
+axs[0].plot(tgrid, x0_sols[-1], linestyle='',marker='o',markersize=2.5, color = 'k')
+axs[1].plot(tgrid, x1_sols[-1], linestyle='',marker='o',markersize=2.5, color = 'k')
+axs[2].plot(tgrid, x2_sols[-1], linestyle='',marker='o',markersize=2.5, color = 'k')
+axs[3].step(tgrid, vertcat(DM.nan(1), u_sols[i]), linestyle='',marker='o',markersize=2.5, color='k')
+
+axs[0].set_ylabel('S')
+axs[1].set_ylabel('I')
+axs[2].set_ylabel('R')
+axs[3].set_ylabel('R0')
+
+axs[0].set_title('RK4 Multiple-Shooting N = %i, ' %N+ "M = %i" %M)
+
+
+axs[3].set_xlabel('t')
+_ = [x.set_xticklabels([]) for x in axs[:-1]]
+_ = [x.ticklabel_format(axis="y", style="sci", scilimits=(0,0)) for x in axs[:-1]]
+
+
+axs[0].grid()
+axs[1].grid()
+axs[2].grid()
+axs[3].grid()
+
+
+plt.show()

@@ -192,6 +192,8 @@ if __name__ == '__main__':
     axs[2].grid()
     axs[3].grid()
 
+    fig.savefig('../Figures/Single_Shooting_Trajectory_IPOPT.eps', format='eps')
+
     fig2, ax2 = plt.subplots(2)
 
     lam_x = np.array(CB.lam_x_sols).squeeze()
@@ -199,7 +201,9 @@ if __name__ == '__main__':
     ax2[1].plot(CB.f_sols, color='k', label='objective value')
 
     ax2[0].set_title(r'Multipliers for bounds on $U$')
-    ax2[1].legend()
+    fig2.subplots_adjust(hspace=.5)
+    ax2[1].set_title(r'Objective values')
     ax2[0].set_xlabel('time')
     ax2[1].set_xlabel('Iteration')
     _ = [x.grid() for x in ax2]
+    fig2.savefig('../Figures/Single_Shooting_obj_con_IPOPT.eps', format='eps')

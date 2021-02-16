@@ -12,12 +12,14 @@ Where $f(.)$ is the trajectory from initial to end state. The intermediate state
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwData{$x_k = x_0, u = [u_0, \dots, u_{N-1}], h, N$}
+define f as a RK4-integrator repeated M times\\
  \For{$i$ = 0 : $N-1$}{
     $x_k, Q_k = RK4(@SIR,@Cost, x_k, u_k, h)$\\
     $J += Q_k$\\
-    Set boundaries and initial value for $u_k$
+    add $u_{min} - u_k, u_k - u_{max}$ to bounds\\
+    set $u_{k,0}$
  }
- \KwRet{$x_k, J$, \text{boundaries and initial values}}
+ \KwRet{$x_k, J, U_0$, bounds}
  \caption{Single-shooting problem construction and integration}
  \label{alg:SingleShooting_Integraion}
 \end{algorithm}
@@ -65,7 +67,10 @@ The complementarity slackness in the Primal-Dual method approximates the constra
     s > 0, \mu &> 0
 \end{align}
 
-\subsection{CasADI using the IPOPT-solver}
+\subsection{Line Search Methods}
+
+
+\subsection{Interfacing IPOPT in CasADI}
 \subsubsection{Implementation}
 Single-shooting is implemented in CasADI using $X_0 \in \mathbb{R}^3, U \in \mathbb{R}^{N}$ as MX-variables. The ODE is integrated $M$ times for each control interval, resulting in a total of $N\times M$ integration steps. Inequality constraints are passed as variable bounds, while equality constraints are passed as regular constraints to the solver.
 
@@ -76,9 +81,11 @@ Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
  \For{$i$ = 0 : $N-1$}{
     $x_k, Q_k$ = $f([@SIR, @Cost\_ODE], x_k, U[i], h)$\\
     $J+= Q_k$\\
+    add $u_{min} - u_k, u_k - u_{max}$ to bounds\\
+    set $u_{k,0}$
  }
  solver = nlpsol('solver', 'ipopt', $\{$J, $U\}$)\\
- sol = solver($x_0$, $U_{min}$, $U_{max}$)
+ sol = solver($U_0$,bounds)
  \caption{Single-shooting with IPOPT}
  \label{alg:SingleShooting_Integration_IPOPT}
 \end{algorithm}
@@ -98,7 +105,8 @@ Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields
     \caption{Bounds multipliers and objective values for single shooting using IPOPT}
     \label{fig:SH_con_obj_IPOPT}
 \end{figure}
+It is clear that the most cost-critical region $t\in [5, 10]$ is considered by the solver when it is searching for a solution. This region contains the highest objective values for the early iterations. The first iterations drastically 
 
-
-
-\subsection{CasADI-Implementation using }
+\textbf{Note:} The IPOPT documentation does not explicitly explain the implementation of bounds, but the solver ensures that the optimization variables stays within them for all iterations. I was not able to find information on the multiplier bounds, but the multipliers retrieved from the solver using callbacks seems to represent both lower and upper bounds.
+\subsection{Using CasADI's Symbolic Framework}
+\subsubsection{}

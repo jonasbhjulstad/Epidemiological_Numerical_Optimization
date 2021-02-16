@@ -36,5 +36,36 @@ add initial condition bounds
  \caption{Multiple-Shooting problem construction and integration (RK4)}
  \label{alg:MultipleShooting_Integraion}
 \end{algorithm}
+
+In order to get comparable performance to single shooting, the multiple shooting scheme should be initialized with the same initial trajectory for the lifted states.
 \subsubsection{Results}
-Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:SH_Traj_IPOPT} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_IPOPT}.
+Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories, bounds multipliers, constraints multipliers and objective values respectively shown in figure \ref{fig:MS_Traj_IPOPT}, \ref{fig:MS_Bounds_IPOPT}, \ref{fig:MS_Cons_Obj_IPOPT} (Using the same initial trajectory as in single shooting). In order to illustrate the advantages of lifting the states, another simulation can be run using $x_0$ as initial value for all lifted states.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_Trajectory_IPOPT.eps}
+    \caption{Trajectories with multiple shooting using IPOPT (feasible initial states)}
+    \label{fig:MS_Traj_IPOPT}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_bounds_IPOPT.eps}
+    \caption{Boundary multipliers with multiple shooting using IPOPT}
+    \label{fig:MS_Bounds_IPOPT}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_IPOPT.eps}
+    \caption{Constraints and objective values multiple shooting using IPOPT}
+    \label{fig:MS_Cons_Obj_IPOPT}
+\end{figure}
+
+Solving the problem with $x_0$ as initial value for all lifted states yields trajectory shown in figure \ref{}
+
+
+
+
+

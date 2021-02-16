@@ -96,6 +96,7 @@ x0_k = x0
 x_min = [0,0,0]
 x_max = [N_pop, N_pop, N_pop]
 Q = []
+traj_initial = False
 # Formulate the NLP
 for k in range(N):
     # New NLP variable for the control
@@ -116,8 +117,10 @@ for k in range(N):
     w   += [Xk]
     lbw += x_min
     ubw += x_max
-    w0  += list(x0_k.full())
-
+    if traj_initial:
+        w0  += list(x0_k.full())
+    else:
+        w0 += x0
     # Add equality constraint
     g   += [Xk_end-Xk]
     lbg += [0,0,0]
@@ -220,7 +223,7 @@ axs[2].grid()
 axs[3].grid()
 
 
-fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT.eps', format='eps')
+
 
 fig2, ax2 = plt.subplots(4)
 
@@ -240,7 +243,6 @@ _ = [x.set_xlabel('') for x in ax2[:-1]]
 ax2[-1].set_xlabel('time')
 _ = [x.grid() for x in ax2]
 
-fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT.eps', format='eps')
 
 
 fig3, ax3 = plt.subplots(4)
@@ -260,5 +262,19 @@ _ = [x.set_xlabel('') for x in ax3[:-1]]
 ax3[-1].set_xlabel('time')
 _ = [x.grid() for x in ax3]
 
-fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT.eps', format='eps')
 plt.show()
+
+if traj_initial:
+
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial.eps', format='eps')
+
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT_traj_initial.eps', format='eps')
+
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial.eps', format='eps')
+
+else:
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT.eps', format='eps')
+
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT.eps', format='eps')
+
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT.eps', format='eps')

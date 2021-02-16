@@ -56,7 +56,7 @@ The most unstable achievable dynamic occurs when $\mathscr{R}_0 = \mathscr{R}_{0
 \subsection{Control strategy}
 In addition to minimization of the total number of infections, a penalty to the strictness of the social distancing policies can be introduced, resulting in the following minimization problem:
 \begin{equation}
-    \min_{w} \Phi(w) = \min_{u = [u_0, \dots, u_k]} \int_{t=0}^{T_{end}} I(t) + \frac{W_u}{u^2}
+    \min_{w} \Phi(w) = \min_{u = [u_0, \dots, u_k]} \int_{t=0}^{T_{end}} I^2(t) - W_u u^2(t)
 \end{equation}
 
 \subsection{Problem Parameters}
@@ -67,5 +67,9 @@ The reproduction number will be lower-bounded by the lowest estimated value from
 \mathscr{R}_0 &\in [0.5, 6.5]
 \end{align}
 
-The default time horizon for the control problems is set to $t \in [0, 28] [\text{days}]$. THe population size is set approximately to Norways total population ($N_{pop} = 5.3\times 10^6$), and the initial number of infected is set to $2000$. 
+The default time horizon for the control problems is set to $t \in [0, 28] [\text{days}]$. The population size is set approximately to Norways total population ($N_{pop} = 5.3\times 10^6$), and the initial number of infected is set to $2000$. Unless stated otherwise, the economical weighting factor $W_u$ is set to a value where the cost-reduction of $u(t)$ is large enough to make an impact on the control strategy.
+
+\begin{equation}
+    W_u = \frac{N_{pop}**2}{100(u_{max}-u_{min})} \approx 4.68\times 10^{10}
+\end{equation}
 

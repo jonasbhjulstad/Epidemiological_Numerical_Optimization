@@ -72,6 +72,8 @@ for j in range(M):
 F = Function('F', [X0, U], [X, Q])
 
 
+
+
 # Start with an empty NLP
 w=[]
 w0 = []
@@ -90,9 +92,10 @@ w += [Xk]
 lbw += x0
 ubw += x0
 w0 += x0
+x0_k = x0
 x_min = [0,0,0]
 x_max = [N_pop, N_pop, N_pop]
-
+Q = []
 # Formulate the NLP
 for k in range(N):
     # New NLP variable for the control
@@ -104,6 +107,8 @@ for k in range(N):
 
     # Integrate till the end of the interval
     Xk_end, Qk = F(Xk, Uk)
+    x0_k, _ = F(x0_k, u0)
+    Q.append(Qk)
     J=J+Qk
 
     # New NLP variable for state at end of interval
@@ -111,14 +116,14 @@ for k in range(N):
     w   += [Xk]
     lbw += x_min
     ubw += x_max
-    w0  += x0
+    w0  += list(x0_k.full())
 
     # Add equality constraint
     g   += [Xk_end-Xk]
     lbg += [0,0,0]
     ubg += [0,0,0]
 
-
+Q_plot = Function('Q_plot', [vertcat(*w)], [vertcat(*Q)])
 opts = {}
 opts["expand"] = True
 opts["ipopt"] = {}
@@ -153,10 +158,27 @@ sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
 w_opt = sol['x'].full().flatten()
 
 w_sols = CB.x_sols
+
 x0_sols = [sol[0::4] for sol in w_sols]
 x1_sols = [sol[1::4] for sol in w_sols]
 x2_sols = [sol[2::4] for sol in w_sols]
 u_sols = [sol[3::4] for sol in w_sols]
+
+lam_x_sols = CB.lam_x_sols
+
+lam_x0_sols = [sol[0::4] for sol in lam_x_sols]
+lam_x1_sols = [sol[1::4] for sol in lam_x_sols]
+lam_x2_sols = [sol[2::4] for sol in lam_x_sols]
+lam_u_sols = [sol[3::4] for sol in lam_x_sols]
+
+lam_g_sols = CB.lam_g_sols
+lam_g0_sols = [sol[0::3] for sol in lam_g_sols]
+lam_g1_sols = [sol[1::3] for sol in lam_g_sols]
+lam_g2_sols = [sol[2::3] for sol in lam_g_sols]
+
+
+lam_g_sols = CB.lam_g_sols
+
 
 N_sols = len(u_sols)
 
@@ -198,4 +220,45 @@ axs[2].grid()
 axs[3].grid()
 
 
+fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT.eps', format='eps')
+
+fig2, ax2 = plt.subplots(4)
+
+
+for i in range(0, len(w_sols), 5):
+    ax2[0].plot(tgrid, lam_x0_sols[i], '-', color = colors[i])
+    ax2[1].plot(tgrid, lam_x1_sols[i], '-', color = colors[i])
+    ax2[2].plot(tgrid, lam_x2_sols[i], '-', color = colors[i])
+    ax2[3].plot(tgrid, vertcat(DM.nan(1), lam_u_sols[i]), '-.', color = colors[i])
+
+ax2[0].set_title(r'Multipliers for bounds')
+_ = [x.set_ylabel(s) for s, x in zip(['S', 'I', 'R', 'u'], ax2)]
+# _ = [x.set_yscale('log') for x in ax2]
+fig2.subplots_adjust(hspace=.2)
+_ = [x.set_xticklabels('') for x in ax2[:-1]]
+_ = [x.set_xlabel('') for x in ax2[:-1]]
+ax2[-1].set_xlabel('time')
+_ = [x.grid() for x in ax2]
+
+fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT.eps', format='eps')
+
+
+fig3, ax3 = plt.subplots(4)
+
+for i in range(0, len(w_sols), 5):
+    ax3[0].plot(tgrid, vertcat(DM.nan(1), lam_g0_sols[i]), '-', color = colors[i])
+    ax3[1].plot(tgrid, vertcat(DM.nan(1), lam_g1_sols[i]), '-', color = colors[i])
+    ax3[2].plot(tgrid, vertcat(DM.nan(1), lam_g2_sols[i]), '-', color = colors[i])
+    ax3[3].plot(tgrid, vertcat(DM.nan(1),Q_plot(w_sols[i])), '-', color = colors[i])
+
+ax3[0].set_title(r'Multipliers for constraints')
+fig3.subplots_adjust(hspace=.5)
+ax3[-1].set_title(r'Objective values')
+_ = [x.set_xticklabels('') for x in ax3[:-1]]
+_ = [x.set_ylabel(s) for s, x in zip(['S', 'I', 'R'], ax3[:-1])]
+_ = [x.set_xlabel('') for x in ax3[:-1]]
+ax3[-1].set_xlabel('time')
+_ = [x.grid() for x in ax3]
+
+fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT.eps', format='eps')
 plt.show()

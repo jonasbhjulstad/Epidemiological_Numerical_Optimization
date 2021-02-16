@@ -96,7 +96,7 @@ x0_k = x0
 x_min = [0,0,0]
 x_max = [N_pop, N_pop, N_pop]
 Q = []
-traj_initial = False
+traj_initial = True
 # Formulate the NLP
 for k in range(N):
     # New NLP variable for the control
@@ -158,6 +158,7 @@ solver = nlpsol('solver', 'ipopt', prob, opts)
 
 # Solve the NLP
 sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
+fval = sol['f']
 w_opt = sol['x'].full().flatten()
 
 w_sols = CB.x_sols
@@ -209,7 +210,7 @@ axs[1].set_ylabel('I')
 axs[2].set_ylabel('R')
 axs[3].set_ylabel('R0')
 
-axs[0].set_title('RK4 Multiple-Shooting N = %i, ' %N+ "M = %i" %M)
+axs[0].set_title('RK4 Multiple-Shooting N = %i, ' %N+ "M = %i" %M+ ", f = {:.2e}".format(fval.full()[0][0]))
 
 
 axs[3].set_xlabel('t')

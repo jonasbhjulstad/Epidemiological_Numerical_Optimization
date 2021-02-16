@@ -1,1 +1,40 @@
 \section{Multiple Shooting}
+\begin{mini*}|s|
+{w}{\sum_{k=1}^NI_k^2 -W_u u_{k-1}^2}
+{}{}
+\addConstraint{f(x_0, u_0) - x_1 = 0}
+\addConstraint{f(x_k, u_k) - x_{k+1} = 0}
+\addConstraint{\vdots}
+\addConstraint{f(x_{N-1}, u_{N-1}) - x_{N} = 0}
+\addConstraint{u_{max} \geq u_k \geq u_{min}}{}
+\end{mini*}
+Where $f(.)$ is the trajectory from $x_k$ to $x_{k+1}$. The problem can be formulated in CasADI by modifying algorithm \ref{alg:SingleShooting_Integraion} to capture intermediate states, bounds and constraints:
+
+
+
+The RK4-integrator can be replaced by collocation constraints resulting in a direct collocation scheme.
+
+\subsection{Interfacing IPOPT in CasADI}
+
+\subsubsection{Implementation}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{$x = MX \in \mathbb{R}^{N+1}, u = \in \mathbb{R}^{N}, h, N, M$}
+define f as chosen integrator
+
+add initial condition bounds
+ \For{$i$ = 0 : $N-1$}{
+    $x_{int}, Q_k = f(@SIR,@Cost, x_k, u_k, h)$\\
+    $J += Q_k$\\
+    add $u_{min} - u_k, u_k - u_{max}$ to bounds\\
+    add $x_{min}-x_k, x_k - x_{max}$ to bounds\\
+    add $x_{int} - x_{k+1}$ to constraints\\
+    set $u_{k,0}$\\
+    set $x_{k, 0}$
+ }
+ \KwRet{$x_k, J,X_0,U_0$, bounds, constraints}
+ \caption{Multiple-Shooting problem construction and integration (RK4)}
+ \label{alg:MultipleShooting_Integraion}
+\end{algorithm}
+\subsubsection{Results}
+Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:SH_Traj_IPOPT} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_IPOPT}.

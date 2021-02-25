@@ -168,7 +168,41 @@ Reducing step lengths using the fraction-to-the-boundary rule resulted in a very
 
 \subsubsection{Vaccination}
 
-Optimization with vaccination policy was solvable without $\delta$ and step-corrections. 
+Optimization with vaccination policy was solvable without $\delta$ and step-corrections.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_Traj.eps}
+    \caption{Trajectories with single shooting using Symbolical DP-IPOPT}
+    \label{fig:Symbolical_DPIPOPT_traj_Vaccine}
+\end{figure}
+Figure \ref{fig:Delta_wk_convergence_Vaccine} shows the convergence of $\Delta w_k$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_error.eps}
+    \caption{$\Delta w_k$-convergence}
+    \label{fig:Delta_wk_convergence_Vaccine}
+\end{figure}
+
+\subsubsection{Isolation}
+
+Optimization with isolation policy was solvable without $\delta$ and step-corrections.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_Traj.eps}
+    \caption{Trajectories with single shooting using Symbolical DP-IPOPT}
+    \label{fig:Symbolical_DPIPOPT_traj_Vaccine}
+\end{figure}
+Figure \ref{fig:Delta_wk_convergence_Vaccine} shows the convergence of $\Delta w_k$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_error.eps}
+    \caption{$\Delta w_k$-convergence}
+    \label{fig:Delta_wk_convergence_Vaccine}
+\end{figure}
 
 
 \subsection{Interfacing IPOPT in CasADI}

@@ -4,18 +4,7 @@
 #     CasADi -- A symbolic framework for dynamic optimization.
 #     Copyright (C) 2010-2014 Joel Andersson, Joris Gillis, Moritz Diehl,
 #                             K.U. Leuven. All rights reserved.
-#     Copyright (C) 2011-2014 Greg HoT = 28. # Time horizon
-# N = 50 # number of control intervals
-# # Declare model variables
-# S = MX.sym('S')
-# I = MX.sym('I')
-# R = MX.sym('R')
-# x = vertcat(S, I, R)
-# u = MX.sym('u')
-# N_pop = 5.3e6
-# u_min = 0.5
-# u_max = 6.5
-# Wu = N_pop**2/(u_max-u_min)/100rn
+#     Copyright (C) 2011-2014 Greg Horn
 #
 #     CasADi is free software; you can redistribute it and/or
 #     modify it under the terms of the GNU Lesser General Public
@@ -34,10 +23,44 @@
 #
 from casadi import *
 from Callbacks.Singleshoot import Singleshoot_CB
-import matplotlib.pyplot as plt
 from matplotlib import cm
-from Parameters.Parameters_Vaccination_Flat import *
-plt.close('all')
+T = 28. # Time horizon
+N = 50 # number of control intervals
+# Declare model variables
+S = MX.sym('S')
+I = MX.sym('I')
+R = MX.sym('R')
+x = vertcat(S, I, R)
+u = MX.sym('u')
+N_pop = 5.3e6
+u_min = 0.5
+u_max = 6.5
+Wu = N_pop**2/(u_max-u_min)/100
+
+alpha = 0.2
+beta = u*alpha
+I0 = 2000
+x0 = [N_pop - I0, I0, 0]
+# Model equations
+xdot = vertcat(-beta*S*I/N_pop, beta*S*I/N_pop-alpha*I, alpha*I)
+
+# Objective term
+L = I**2 - Wu*u**2
+
+meshplot = True
+# Formulate discrete time dynamics
+
+# Fixed step Runge-Kutta 4 integrator
+M = 30 # RK4 steps per interval
+DT = T/N/M
+nx = 3
+nu = 1
+f = Function('f', [x, u], [xdot, L])
+X0 = MX.sym('X0', nx)
+U = MX.sym('U')
+X = X0
+Q = 0
+
 
 for j in range(M):
    k1, k1_q = f(X, U)
@@ -47,8 +70,6 @@ for j in range(M):
    X+= DT/6*(k1 +2*k2 +2*k3 +k4)
    Q += DT/6*(k1_q + 2*k2_q + 2*k3_q + k4_q)
 F = Function('F', [X0, U], [X, Q])
-nx = 3
-nu = 1
 
 
 
@@ -75,7 +96,7 @@ x0_k = x0
 x_min = [0,0,0]
 x_max = [N_pop, N_pop, N_pop]
 Q = []
-traj_initial = True
+traj_initial = False
 # Formulate the NLP
 for k in range(N):
     # New NLP variable for the control
@@ -108,21 +129,23 @@ for k in range(N):
 Q_plot = Function('Q_plot', [vertcat(*w)], [vertcat(*Q)])
 opts = {}
 opts["expand"] = True
-# opts['qpsol_options'] = {}
-# opts['hessian_approximation'] = 'limited-memory'
-# opts['qpsol_options']['enableFlippingBounds'] = True
-# opts['max_iter'] = 1000
-# opts['min_step_size'] = 1e-9
-opts["ipopt"] = {}
-opts["ipopt"]["print_level"] = 5
+opts['qpsol_options'] = {}
+opts['hessian_approximation'] = 'limited-memory'
+opts['qpsol_options']['enableFlippingBounds'] = True
+opts['max_iter'] = 1000
+opts['min_step_size'] = 1e-9
+# opts["ipopt"] = {}
+# opts["ipopt"]["print_level"] = 5
 
+# IPOPT_CB = IPOPT_Callback()
+# opts["ipopt"]["iteration_callback"] = IPOPT_CB
 
 iter_step = 1
 iter_file = '../data/log.opt'
-opts["ipopt"]["output_file"] = '../data/log.opt'
-opts["ipopt"]["file_print_level"] = 5
-opts["ipopt"]["print_frequency_iter"] = iter_step
-opts["ipopt"]["print_user_options"] = 'yes'
+# opts["ipopt"]["output_file"] = '../data/log.opt'
+# opts["ipopt"]["file_print_level"] = 5
+# opts["ipopt"]["print_frequency_iter"] = iter_step
+# opts["ipopt"]["print_user_options"] = 'yes'
 opts["calc_f"] = True
 opts["calc_g"] = True
 
@@ -136,7 +159,7 @@ opts["iteration_callback_step"] = iter_step
 
 # Create an NLP solver
 prob = {'f': J, 'x': vertcat(*w), 'g': vertcat(*g)}
-solver = nlpsol('solver', 'ipopt', prob, opts)
+solver = nlpsol('solver', 'sqpmethod', prob, opts)
 
 # Solve the NLP
 sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
@@ -191,7 +214,7 @@ axs[3].step(tgrid, vertcat(DM.nan(1), u_sols[i]), linestyle='',marker='o',marker
 axs[0].set_ylabel('S')
 axs[1].set_ylabel('I')
 axs[2].set_ylabel('R')
-axs[3].set_ylabel('u')
+axs[3].set_ylabel('R0')
 
 axs[0].set_title('RK4 Multiple-Shooting N = %i, ' %N+ "M = %i" %M+ ", f = {:.2e}".format(fval.full()[0][0]) + ", iterations = %i" %len(w_sols))
 
@@ -262,15 +285,15 @@ save = True
 
 if traj_initial and save:
 
-    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial.eps', format='eps')
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_SQP_traj_initial.eps', format='eps')
 
-    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT_traj_initial.eps', format='eps')
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_SQP_traj_initial.eps', format='eps')
 
-    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial.eps', format='eps')
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_SQP_traj_initial.eps', format='eps')
 
 elif save:
-    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT.eps', format='eps')
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_SQP.eps', format='eps')
 
-    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT.eps', format='eps')
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_SQP.eps', format='eps')
 
-    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT.eps', format='eps')
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_SQP.eps', format='eps')

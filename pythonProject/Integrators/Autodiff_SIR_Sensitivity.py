@@ -3,23 +3,28 @@ from ODEs.SIR import SIR
 import pickle as pck
 import pandas as pd
 import matplotlib.pyplot as plt
-def Autodiff_SIR(x, u, alpha, h, Ak, Bk):
+
+N_pop = 5.3e6
+
+
+def Autodiff_SIR(x, R0, alpha, h, Ak, Bk):
     def dF_dx(x, u):
-        return np.array([[-u*x[1], -u*x[0], 0],
-                        [u*x[1], u*x[0]-alpha, 0],
+        return np.array([[-u*x[1]/N_pop, -u*x[0]/N_pop, 0],
+                        [u*x[1]/N_pop, u*x[0]/N_pop-alpha, 0],
                         [0, alpha, 0]])
     def dF_du(x):
-        return np.array([-x[0]*x[1],
-                         x[0]*x[1],
+        return np.array([-x[0]*x[1]/N_pop,
+                         x[0]*x[1]/N_pop,
                          0])
 
-    k1 = SIR(x, alpha, u)
-    k2 = SIR(x + (h/2)*k1, alpha, u)
-    k3 = SIR(x + h/2*k2, alpha, u)
-    k4 = SIR(x + h*k3, alpha, u)
+    k1 = SIR(x, alpha,N_pop,  R0)
+    k2 = SIR(x + (h/2)*k1, alpha, N_pop, R0)
+    k3 = SIR(x + h/2*k2, alpha, N_pop, R0)
+    k4 = SIR(x + h*k3, alpha, N_pop, R0)
 
     xk_1 = x + h/6*(k1 + 2*k2 + 2*k3 + k4)
 
+    u = R0*alpha
     k1_x = dF_dx(x, u)
     k2_x = dF_dx(x + h/2*k1, u)
     k3_x = dF_dx(x + h/2*k2, u)
@@ -40,16 +45,17 @@ def Autodiff_SIR(x, u, alpha, h, Ak, Bk):
     return xk_1, Ak_1,Bk_1
 
 
-def Autodiff_SIR_Sensitivity(dt,start=0 , stop=0,plot=False, save = []):
-    X0 = np.array([997, 3, 0])
-    N = np.sum(X0)
-    alpha = 1.0/3.0
-    R0 = 10
-    u = R0*alpha/N
+def Autodiff_SIR_Sensitivity(dt,start=0 , stop=28,plot=False, save = []):
+    T = 28.  # Time horizon
+    # Declare model variables
+    I0 = 2000
+    u_min = 0.5
+    R0 = 6.5
 
     t = np.arange(start, stop,dt)
-
-
+    X0 = [N_pop - I0, I0, 0]
+    alpha = 0.2
+    u = R0
     A = [np.eye(3)]
     x = [X0]
     B = [np.array([0,0,0])]
@@ -106,3 +112,6 @@ def Autodiff_SIR_Sensitivity(dt,start=0 , stop=0,plot=False, save = []):
     if np.any(save):
         df.to_pickle(save)
     return df
+
+if __name__ == '__main__':
+    Autodiff_SIR_Sensitivity(0.1, plot=True)

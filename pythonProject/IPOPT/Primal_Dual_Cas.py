@@ -5,35 +5,10 @@ from RK4.Integrator import RK4_Integrator
 from numpy import matmul as mul
 import numpy.linalg as la
 import matplotlib.pyplot as plt
-
+from scipy.linalg import cho_factor, cho_solve
 if __name__ == '__main__':
 
-    T = 28.  # Time horizon
-    N = 50  # number of control intervals
-    M = 30
-    DT = T/N/M
-
-    # Declare model variables
-    S = MX.sym('S')
-    I = MX.sym('I')
-    R = MX.sym('R')
-    x = vertcat(S, I, R)
-    u = MX.sym('u')
-    N_pop = 5.3e6
-    u_min = 0.5
-    u_max = 6.5
-    Wu = N_pop ** 2 / (u_max - u_min) / 10
-
-    alpha = 0.2
-    beta = u * alpha
-    I0 = 2000
-    x0 = [N_pop - I0, I0, 0]
-    # Model equations
-    xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I, alpha * I)
-    # Objective term
-    L = I ** 2 - Wu * u ** 2
-
-    f = Function('f', [x,u], [xdot, L])
+    from Parameters.Parameters_Vaccination_Flat import *
     Q = 0
     X0 = MX.sym('X0', 3,1)
     X = X0
@@ -74,14 +49,24 @@ if __name__ == '__main__':
 
     Fr = Function('r',[w, tau], [r])
     Fr_obj = Function('r_obj', [tau], [r])
+    Nr = Fr.sx_out(0).shape[0]
+    Nw = w.shape[0]
+    Nu = U.shape[0]
+    delta_w = 1
+    delta_c = 1e-3
+    posdef_deltamat = DM.zeros(Nr, Nr)
+    posdef_deltamat[0:Nu, 0:Nu] = DM.eye(Nu)*delta_w
+    posdef_deltamat[Nu:, Nu:] = -DM.eye(Nr-Nu)*delta_c
+
+
+
     jac_Fr = Function('jac_Fr', [w, tau], [jacobian(r, w)])
     tol_lim = 1e-3
-    u0 = 1000
     U0 = np.array([[u0]*U.shape[0]])
     tau = 1
     mu0 = np.ones((1,Nh))
     s0 = mu0
-    w0 = np.concatenate([U0, mu0, s0], axis=1)
+    w0 = np.concatenate([U0, mu0, s0], axis=1).T
 
     G = rootfinder('root_r', 'newton', Fr)
 
@@ -104,38 +89,57 @@ if __name__ == '__main__':
     s_mu_g = -vertcat(s, mu)
     s_mu_lb = np.full((1, Nh), -inf)
     s_mu_ub = np.zeros((1,Nh))
-    tau_b = 1-1e-8
+    tau_b = 1-1e-5
 
     def max_step(x, d):
         alpha = 1
         condition = DM([1])
         while not condition.is_zero():
+            alpha = ((1-tau_b)*x - x)
             condition = (x + alpha * d) < ((1 - tau_b) * x)
             alpha*=0.9
-        return alpha/.9
+        return alpha
 
-    while tau > tau_tol:
-        tau_list.append(tau)
-        tau*=.9
-    for tau in tqdm(tau_list):
+    max_iter = 100
+    wk_diff = 1000
+    wk_diff_list = []
+    wk_diff_tol = 1e-4
+    tau = 1
+    while (wk_diff > wk_diff_tol) or (tau > 0.1):
+        print(tau, wk_diff)
+        error_k = tol + 1
+        iter = 0
+        wk_old = wk
         error = tol + 1
-        while error > tol:
+        while (error > tol) and (iter < max_iter):
             fk = Fr(wk, tau)
-            d = -la.inv(jac_Fr(wk, tau)) @ fk
-            d_x, d_mu, d_s = separate_w(d)
-            xk, mu_k, s_k = separate_w(wk)
+            jFr = jac_Fr(wk, tau)
+            # for i in range(Nr):
+            #     if jFr[i, i] < 0:
+            #         jFr[i,i] = 1e3
+            # d = -la.inv(jFr) @ fk
+            # d_x, d_mu, d_s = separate_w(d)
+            # xk, mu_k, s_k = separate_w(wk)
+            #
+            # # alpha_s = max_step(s_k, d_s)
+            # # alpha_mu = max_step(mu_k, d_mu)
+            # alpha_s = 1
+            # alpha_mu = 1
+            #
+            # xk = xk + alpha_s*d_x
+            # s_k = s_k + alpha_s*d_s
+            # mu_k = mu_k + alpha_mu*d_mu
 
-            alpha_s = max_step(s_k, d_s)
-            alpha_mu = max_step(mu_k, d_mu)
 
-            xk = xk + alpha_s*d_x
-            s_k = s_k + alpha_s*d_s
-            mu_k = mu_k + alpha_mu*d_mu
-
-            wk = vertcat(xk, s_k, mu_k)
-
+            # wk = vertcat(xk, s_k, mu_k)
+            wk = wk - la.inv(jac_Fr(wk, tau)) @ Fr(wk, tau)
             error = norm_1(fk)
-            print('Alphas: ' + str(alpha_s) + ', ' + str(alpha_mu) + ', error: ' + str(error))
+        wk_diff = norm_1(wk_old-wk)
+        wk_diff_list.append(wk_diff)
+        tau *=.9
+        if np.any(np.isnan(wk)):
+            break
+            #print('Alphas: ' + str(alpha_s) + ', ' + str(alpha_mu) + ', error: ' + str(error))
         wk_list.append(wk)
 
 
@@ -145,18 +149,49 @@ if __name__ == '__main__':
     s_sols = [s_plot(wk) for wk in wk_list]
     Q = 0
 
+
+    import matplotlib.pyplot as plt
+    from matplotlib import cm
+    colormap = cm.get_cmap('Greys', len(X_sols))
+    colors = colormap(np.linspace(.1, .8, len(X_sols)))
+
     tgrid = np.linspace(0,T,N)
     fig, ax = plt.subplots(4)
-    ax[0].plot(tgrid.T, X_sols[-1][0,:].T)
-    ax[1].plot(tgrid.T, X_sols[-1][1,:].T)
-    ax[2].plot(tgrid.T, X_sols[-1][2,:].T)
+    for X_sol, U_sol, color in zip(X_sols[:-1], U_sols[:-1], colors[:-1]):
+        ax[0].plot(tgrid.T, X_sol[0,:].T, color=color)
+        ax[1].plot(tgrid.T, X_sol[1,:].T, color=color)
+        ax[2].plot(tgrid.T, X_sol[2,:].T, color=color)
 
-    ax[3].plot(tgrid.T, U_sols[-1])
+        ax[3].step(tgrid.T, U_sol, color=color)
+
+    ax[0].plot(tgrid.T, X_sols[-1][0, :].T, color='k', marker='')
+    ax[1].plot(tgrid.T, X_sols[-1][1, :].T, color='k', marker='')
+    ax[2].plot(tgrid.T, X_sols[-1][2, :].T, color='k', marker='')
+
+    ax[3].step(tgrid.T, U_sols[-1], color='k', marker='')
     ax[3].set_ylim([u_min, u_max])
+    _ = [x.grid() for x in ax]
+
+    ax[0].set_title('RK4 Single-Shooting N = %i, ' % N + "M = %i" % M + ", iterations = %i" %len(X_sols))
+
+    ax[0].set_ylabel('S')
+    ax[1].set_ylabel('I')
+    ax[2].set_ylabel('R')
+    ax[3].set_ylabel('u')
+    ax[3].set_xlabel('time[days]')
+
+    fig2, ax2 = plt.subplots()
+    ax2.plot(wk_diff_list, color='k')
+    ax2.grid()
+    ax2.set_yscale('log')
+    ax2.set_xlabel('Iteration')
+    ax2.set_ylabel(r'$|\Delta w_k|$')
 
     plt.show()
-
-
+    save = True
+    if save:
+        fig.savefig('../Figures/Symbolic_IPOPT_Traj.eps', format='eps')
+        fig2.savefig('../Figures/Symbolic_IPOPT_error.eps', format='eps')
 
 
 

@@ -15,8 +15,7 @@ import pickle as pck
 import xarray as xr
 # Press the green button in the gutter to run the script.
 
-N_pop = 10000
-alpha = 0.1
+
 
 
 def SIR(X, R0):
@@ -24,12 +23,8 @@ def SIR(X, R0):
     return vertcat(-beta * X[0, :] * X[1, :]/N_pop, beta * X[0, :] * X[1, :]/N_pop - alpha * X[1, :], alpha * X[1, :])
 
 if __name__ == '__main__':
+    from Parameters.Parameters_Social_Distancing import *
     plt.close()
-    u_lb = [1e-4]
-    u_ub = [10]
-    u_init = [1]
-    Wu = 1000
-    I0 = 1000
 
     d = 3
     B, C, D, tau_root = collocation_coeffs(d)
@@ -79,26 +74,7 @@ if __name__ == '__main__':
     R = MX.sym('R')
     x = vertcat(S, I, R)
     u = MX.sym('u')
-    Wu = 0.01
 
-
-    alpha = 0.2
-    beta = u * alpha
-    N_pop = 10000
-    I0 = 2000
-    x0 = [N_pop - I0, I0, 0]
-    # Model equations
-    xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I, alpha * I)
-
-    # Objective term
-    L = I ** 2 - Wu * u ** 2
-
-    # Continuous time dynamics
-    f = Function('f', [x, u], [xdot, L], ['x', 'u'], ['xdot', 'L'])
-
-    # Control discretization
-    N = 50  # number of control intervals
-    h = T / N
 
     # Start with an empty NLP
     w = []
@@ -119,8 +95,7 @@ if __name__ == '__main__':
         x_min = [0,0,0]
         x_max = [N_pop, N_pop, N_pop]
 
-    u_min = 0.5
-    u_max = 6.5
+
     u0 = u_max
     # For plotting x and u given w
     x_plot = []

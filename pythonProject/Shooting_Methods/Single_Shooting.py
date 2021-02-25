@@ -26,40 +26,7 @@ from Callbacks.Singleshoot import Singleshoot_CB
 import pandas as pd
 from Parsing.IPOPT_Parse import parse_IPOPT_log
 if __name__ == '__main__':
-    T = 28. # Time horizon
-    N = 50 # number of control intervals
-
-    # Declare model variables
-    S = MX.sym('S')
-    I = MX.sym('I')
-    R = MX.sym('R')
-    x = vertcat(S, I, R)
-    u = MX.sym('u')
-    N_pop = 5.3e6
-    u_min = 0.5
-    u_max = 6.5
-    Wu = N_pop**2/(u_max-u_min)/100
-
-    alpha = 0.2
-    beta = u*alpha
-    I0 = 2000
-    x0 = [N_pop - I0, I0, 0]
-    # Model equations
-    xdot = vertcat(-beta*S*I/N_pop, beta*S*I/N_pop-alpha*I, alpha*I)
-
-    # Objective term
-    L = I**2 - Wu*u**2
-
-    # Formulate discrete time dynamics
-    # Fixed step Runge-Kutta 4 integrator
-    M = 30 # RK4 steps per interval
-    DT = T/N/M
-    f = Function('f', [x, u], [xdot, L])
-    X0 = MX.sym('X0', 3)
-    U = MX.sym('U')
-    X = X0
-    Q = 0
-    X_plot = [X0]
+    from Parameters.Parameters_Vaccination_Flat import *
     for j in range(M):
        k1, k1_q = f(X, U)
        k2, k2_q = f(X + DT/2 * k1, U)
@@ -117,7 +84,6 @@ if __name__ == '__main__':
     CB = Singleshoot_CB('Singleshoot_CB', NV, Ng,1,iter_step)
     opts["iteration_callback"] = CB
     opts["iteration_callback_step"] = iter_step
-    opts["ipopt.tol"] = 1e-12
 
 
 
@@ -128,6 +94,7 @@ if __name__ == '__main__':
     # Solve the NLP
     sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
     w_opt = sol['x']
+    fval = sol['f']
 
     u_opt = w_opt.full()
     N_sols = len(CB.x_sols)
@@ -174,10 +141,10 @@ if __name__ == '__main__':
         axs[2].plot(tgrid, sol[2], '-', color = colors[i])
         axs[3].step(tgrid_u,  u_sols[i], '-.', color = colors[i])
 
-    axs[0].plot(tgrid, sol[0], linestyle='',marker='o',markersize=2.5, color = 'k')
-    axs[1].plot(tgrid, sol[1], linestyle='',marker='o',markersize=2.5, color = 'k')
-    axs[2].plot(tgrid, sol[2], linestyle='',marker='o',markersize=2.5, color = 'k')
-    axs[3].step(tgrid_u, u_sols[i], linestyle='',marker='o',markersize=2.5, color='k')
+    axs[0].plot(tgrid[0::M], sol[0][0::M], linestyle='-',marker='o',markersize=2.5, color = 'k')
+    axs[1].plot(tgrid[0::M], sol[1][0::M], linestyle='-',marker='o',markersize=2.5, color = 'k')
+    axs[2].plot(tgrid[0::M], sol[2][0::M], linestyle='-',marker='o',markersize=2.5, color = 'k')
+    axs[3].step(tgrid_u, u_sols[i], linestyle='-',marker='o',markersize=2.5, color='k')
 
     axs[3].set_xlabel('t[days]')
     _ = [x.set_xticklabels([]) for x in axs[:-1]]
@@ -190,8 +157,7 @@ if __name__ == '__main__':
 
     _ = [x.ticklabel_format(axis="y", style="sci", scilimits=(0,0)) for x in axs[:-1]]
 
-    axs[0].set_title('RK4 Single-Shooting N = %i, ' %N+ "M = %i" %M)
-
+    axs[0].set_title('RK4 Single-Shooting N = %i, ' % N + "M = %i" % M + ", f = {:.2e}".format(fval.full()[0][0]) + ", iterations = %i" %len(u_sols))
 
     axs[0].grid()
     axs[1].grid()
@@ -203,14 +169,19 @@ if __name__ == '__main__':
     fig2, ax2 = plt.subplots(2)
 
     lam_x = np.array(CB.lam_x_sols).squeeze()
-    [ax2[0].plot(tgrid_u, lam, color=color,marker='o', linestyle='-', markersize=2.5) for i, (lam, color) in enumerate(zip(lam_x, colors))]
+    [ax2[0].plot(tgrid_u, lam, color=color,marker='', linestyle='-', markersize=2.5) for i, (lam, color) in enumerate(zip(lam_x, colors))]
     [ax2[1].plot(tgrid_u, np.array(Q_plot).squeeze(), color=color) for Q_plot, color in zip(Q_plots, colors)]
+    ax2[0].plot(tgrid_u, lam, color='k',marker='o', linestyle='-', markersize=2.5)
+    ax2[1].plot(tgrid_u, np.array(Q_plot).squeeze(), linestyle='-',marker='o', color='k', markersize=2.5)
 
     ax2[0].set_title(r'Multipliers for bounds on $U$')
     fig2.subplots_adjust(hspace=.2)
     ax2[1].set_title(r'Objective values')
     ax2[0].set_xticklabels('')
     ax2[0].set_xlabel('')
-    ax2[1].set_xlabel('time')
+    ax2[1].set_xlabel('time[days]')
     _ = [x.grid() for x in ax2]
-    fig2.savefig('../Figures/Single_Shooting_obj_con_IPOPT.eps', format='eps')
+
+    save = False
+    if save:
+        fig2.savefig('../Figures/Single_Shooting_obj_con_IPOPT.eps', format='eps')

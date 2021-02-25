@@ -58,16 +58,12 @@ class collocation_plot(object):
             [axs[1].plot(tk, i, color=color) for tk, i in zip(self.tgrid_poly, I_traj)]
             [axs[2].plot(tk, r, color=color) for tk, r in zip(self.tgrid_poly, R_traj)]
 
-            # axs[0].plot(self.tgrid, x_plot.values[0,:-1].T)
-            # axs[1].plot(self.tgrid, x_plot.values[1,:-1].T)
-            # axs[2].plot(self.tgrid, x_plot.values[2,:-1].T)
-
             axs[3].plot(tgrid_u, u_plot, color=color)
             if marker != '':
-                [axs[0].plot([tk[0], tk[-1]], [s[0], s[-1]], color=color, marker=marker, markersize=markersize) for tk, s in zip(self.tgrid_poly, S_traj)]
-                [axs[1].plot([tk[0], tk[-1]], [i[0], i[-1]], color=color, marker=marker, markersize=markersize) for tk, i in zip(self.tgrid_poly, I_traj)]
-                [axs[2].plot([tk[0], tk[-1]], [r[0], r[-1]], color=color, marker=marker, markersize=markersize) for tk, r in zip(self.tgrid_poly, R_traj)]
-                axs[3].plot([tgrid_u[0], tgrid_u[-1]], [u_plot[0], u_plot[-1]], color=color, marker=markersize, markersize=2.5)
+                [axs[0].plot([tk[0], tk[-1]], [s[0], s[-1]], color='k', marker=marker, markersize=markersize) for tk, s in zip(self.tgrid_poly, S_traj)]
+                [axs[1].plot([tk[0], tk[-1]], [i[0], i[-1]], color='k', marker=marker, markersize=markersize) for tk, i in zip(self.tgrid_poly, I_traj)]
+                [axs[2].plot([tk[0], tk[-1]], [r[0], r[-1]], color='k', marker=marker, markersize=markersize) for tk, r in zip(self.tgrid_poly, R_traj)]
+                axs[3].plot(tgrid_u, u_plot, color='k', marker=marker, markersize=2.5)
 
 
         fig, axs = plt.subplots(4)
@@ -79,7 +75,7 @@ class collocation_plot(object):
         if full_plot:
             iter_steps = np.arange(self.iter, self.N_iter, iteration_step)
             colormap = cm.get_cmap('Greys', len(iter_steps))
-            colors = colormap(np.linspace(.1, .8, len(iter_steps)))
+            colors = colormap(np.linspace(.1, .6, len(iter_steps)))
             [theta_plot(self.thetas[iter],self.x_plot[iter], self.u_plot[iter], axs, color=colors[i] ) for i, iter in enumerate(iter_steps)]
             theta_plot(self.thetas[-1],self.x_plot[-1], self.u_plot[-1], axs, color=colors[-1], marker='o', markersize=3)
             axs[0].set_ylabel('S')

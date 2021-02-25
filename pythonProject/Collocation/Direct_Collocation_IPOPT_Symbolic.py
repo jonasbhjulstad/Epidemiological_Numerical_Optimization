@@ -19,47 +19,19 @@ import xarray as xr
 
 
 
-def SIR(X, alpha, u):
-    return vertcat(-u * X[0, :] * X[1, :], u * X[0, :] * X[1, :] - alpha * X[1, :], alpha * X[1, :])
 
 if __name__ == '__main__':
     plt.close()
-    u_lb = [1e-4]
-    u_ub = [10]
-    u_init = [1]
-    alpha = 0.1
-    Wu = 0.01
-    N_pop = 10000
-    I0 = 100
+
 
     d = 3
     B, C, D, tau_root = collocation_coeffs(d)
 
     do_solve = False
     data_path = r'../data/'
-    # Time horizon
-    T = 100
-    nx = 3
-    nu = 1
-    tf = T
 
-    # Declare model variables
-    x = MX.sym('x', nx, 1)
-    u = MX.sym('u')
 
-    # Model equations
-    xdot = SIR(x, alpha, u)
-
-    # Objective term
-    normalizing_factor = 1/(N_pop**2 + np.array(u_ub)**2)
-    L = (x[1]*x[1] + Wu/(u*u))*normalizing_factor
-
-    # Continuous time dynamics
-    f = Function('f', [x, u], [xdot, L], ['x', 'u'], ['xdot', 'L'])
-
-    # Control discretization
-    N = 5  # number of control intervals
-    h = T / N
+    from Parameters.Parameters_Vaccination_Flat import *
 
     # Start with an empty NLP
     w = []

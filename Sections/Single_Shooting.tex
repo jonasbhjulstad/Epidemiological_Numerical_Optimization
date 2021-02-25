@@ -81,7 +81,7 @@ In the case where the end-state of the trajectory is unconstrained, $g(w)$ can b
     \end{bmatrix} &= \nabla r(w, \mu, \tau)^{-1} r(w, \mu, \tau)
 \end{align}
 
-It is not possible to guarantee invertibility of $r$ for the SIR-model due to nonlinear dynamics. [\cite{IPOPT_output_ref}] suggests ensuring invertibility by adding a diagonal term $\delta_w$ to the hessian of the lagrangian $\nabla_{ww}\mathcal{L}(w, \mu)$ in $\nabla r(w\mu, \tau)$.
+It is not possible to guarantee invertibility of $r$ for the SIR-model due to nonlinear dynamics. [\cite{IPOPT_output_ref}] suggests ensuring invertibility by adding a diagonal term $\delta_w$ to the hessian of the lagrangian $\nabla_{ww}\mathcal{L}(w, \mu)$ in $\nabla r(w,\mu, \tau)$.
 
 The steps can be constrained to decrease $r(w, \mu, \tau)$ at every iteration with the fraction-to-the-boundary rule:
 \begin{align}
@@ -172,16 +172,16 @@ Optimization with vaccination policy was solvable without $\delta$ and step-corr
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_Traj.eps}
-    \caption{Trajectories with single shooting using Symbolical DP-IPOPT}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_Traj_Vaccination.eps}
+    \caption{Vaccination trajectories using Symbolical DP-IPOPT}
     \label{fig:Symbolical_DPIPOPT_traj_Vaccine}
 \end{figure}
 Figure \ref{fig:Delta_wk_convergence_Vaccine} shows the convergence of $\Delta w_k$.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_error.eps}
-    \caption{$\Delta w_k$-convergence}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_error_Vaccination.eps}
+    \caption{$\Delta w_k$-convergence (Vaccine)}
     \label{fig:Delta_wk_convergence_Vaccine}
 \end{figure}
 
@@ -191,17 +191,17 @@ Optimization with isolation policy was solvable without $\delta$ and step-correc
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_Traj.eps}
-    \caption{Trajectories with single shooting using Symbolical DP-IPOPT}
-    \label{fig:Symbolical_DPIPOPT_traj_Vaccine}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_Traj_Isolation.eps}
+    \caption{Isolation trajectories using Symbolical DP-IPOPT}
+    \label{fig:Symbolical_DPIPOPT_traj_Vaccine_Isolation}
 \end{figure}
-Figure \ref{fig:Delta_wk_convergence_Vaccine} shows the convergence of $\Delta w_k$.
+Figure \ref{fig:Delta_wk_convergence_Isolation} shows the convergence of $\Delta w_k$.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_error.eps}
-    \caption{$\Delta w_k$-convergence}
-    \label{fig:Delta_wk_convergence_Vaccine}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Symbolic_IPOPT_error_Isolation.eps}
+    \caption{$\Delta w_k$-convergence (Isolation)}
+    \label{fig:Delta_wk_convergence_Isolation}
 \end{figure}
 
 

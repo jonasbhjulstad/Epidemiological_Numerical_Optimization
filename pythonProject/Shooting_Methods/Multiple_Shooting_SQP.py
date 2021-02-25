@@ -24,43 +24,14 @@
 from casadi import *
 from Callbacks.Singleshoot import Singleshoot_CB
 from matplotlib import cm
-T = 28. # Time horizon
-N = 50 # number of control intervals
-# Declare model variables
-S = MX.sym('S')
-I = MX.sym('I')
-R = MX.sym('R')
-x = vertcat(S, I, R)
-u = MX.sym('u')
-N_pop = 5.3e6
-u_min = 0.5
-u_max = 6.5
-Wu = N_pop**2/(u_max-u_min)/100
+from Parameters.Parameters_Vaccination_Flat import *
 
-alpha = 0.2
-beta = u*alpha
-I0 = 2000
-x0 = [N_pop - I0, I0, 0]
-# Model equations
-xdot = vertcat(-beta*S*I/N_pop, beta*S*I/N_pop-alpha*I, alpha*I)
-
-# Objective term
-L = I**2 - Wu*u**2
-
-meshplot = True
-# Formulate discrete time dynamics
-
-# Fixed step Runge-Kutta 4 integrator
-M = 30 # RK4 steps per interval
-DT = T/N/M
 nx = 3
-nu = 1
-f = Function('f', [x, u], [xdot, L])
 X0 = MX.sym('X0', nx)
 U = MX.sym('U')
 X = X0
 Q = 0
-
+nu = 1
 
 for j in range(M):
    k1, k1_q = f(X, U)
@@ -134,6 +105,8 @@ opts['hessian_approximation'] = 'limited-memory'
 opts['qpsol_options']['enableFlippingBounds'] = True
 opts['max_iter'] = 1000
 opts['min_step_size'] = 1e-9
+opts['error_on_fail'] = False
+opts['qpsol_options']['error_on_fail'] = False
 # opts["ipopt"] = {}
 # opts["ipopt"]["print_level"] = 5
 
@@ -285,15 +258,15 @@ save = True
 
 if traj_initial and save:
 
-    fig.savefig('../Figures/Multiple_Shooting_Trajectory_SQP_traj_initial.eps', format='eps')
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_SQP_traj_initial_' + sim_name + '.eps', format='eps')
 
-    fig2.savefig('../Figures/Multiple_Shooting_bounds_SQP_traj_initial.eps', format='eps')
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_SQP_traj_initial_' + sim_name + '.eps', format='eps')
 
-    fig3.savefig('../Figures/Multiple_Shooting_obj_con_SQP_traj_initial.eps', format='eps')
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_SQP_traj_initial_' + sim_name + '.eps', format='eps')
 
 elif save:
-    fig.savefig('../Figures/Multiple_Shooting_Trajectory_SQP.eps', format='eps')
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_SQP_' + sim_name + '.eps', format='eps')
 
-    fig2.savefig('../Figures/Multiple_Shooting_bounds_SQP.eps', format='eps')
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_SQP_' + sim_name + '.eps', format='eps')
 
-    fig3.savefig('../Figures/Multiple_Shooting_obj_con_SQP.eps', format='eps')
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_SQP_' + sim_name + '.eps', format='eps')

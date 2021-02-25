@@ -36,7 +36,7 @@ from casadi import *
 from Callbacks.Singleshoot import Singleshoot_CB
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from Parameters.Parameters_Vaccination_Flat import *
+from Parameters.Parameters_Isolation import *
 plt.close('all')
 
 for j in range(M):
@@ -262,15 +262,15 @@ save = True
 
 if traj_initial and save:
 
-    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial.eps', format='eps')
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial_' + sim_name + '.eps', format='eps')
 
-    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT_traj_initial.eps', format='eps')
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT_traj_initial_' + sim_name + '.eps', format='eps')
 
-    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial.eps', format='eps')
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_' + sim_name + '.eps', format='eps')
 
 elif save:
-    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT.eps', format='eps')
+    fig.savefig('../Figures/Multiple_Shooting_Trajectory_IPOPT_' + sim_name + '.eps', format='eps')
 
-    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT.eps', format='eps')
+    fig2.savefig('../Figures/Multiple_Shooting_bounds_IPOPT_' + sim_name + '.eps', format='eps')
 
-    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT.eps', format='eps')
+    fig3.savefig('../Figures/Multiple_Shooting_obj_con_IPOPT_' + sim_name + '.eps', format='eps')

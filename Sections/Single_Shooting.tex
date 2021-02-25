@@ -2,7 +2,7 @@
 The optimization problem can be formulated as an nlp with the system dynamics as constraints. To avoid persistent strict policies, the cost function decreases quadratically with $u_k$. This can be viewed as a penalty modelling the negative impacts of lockdown.
 
 \begin{mini*}|s|
-{w}{\sum_{k=1}^NI_k^2 -W_u u_{k-1}^2}
+{w}{\sum_{k=1}^NI_k^2 -W_u u_{k-1}^2 \triangleq \Phi(w)}
 {}{}
 \addConstraint{x_f = f(x_0, [u_0, \dots, u_{N-1}])}
 \addConstraint{u_{max} \geq u_k \geq u_{min}}{}
@@ -36,6 +36,7 @@ Optimal control is solved using default parameters and initial conditions from \
 
 
 \subsection{Primal-Dual Interior Point Formulation}
+\subsubsection{KKT Conditions}
 The inequalities can be replaced using the log-barrier method:
 
 \begin{mini*}|s|
@@ -62,12 +63,112 @@ The complementarity slackness in the Primal-Dual method approximates the constra
 \begin{align}
         \nabla \Phi(w) + \nabla h(w)\nu + &\nabla f(x_0, [u_0, \dots, u_{N-1}])\lambda = 0 \nonumber \\ 
         g(w) &= 0\nonumber \label{eq:KKT_approx_IPOPT}\\
-    h_i(w) + s &= 0\\\nonumber
+    h_i(w) + s_i &= 0\\\nonumber
     \mu_is_i-\tau &= 0\\\nonumber
     s > 0, \mu &> 0
 \end{align}
 
-\subsection{Line Search Methods}
+\subsubsection{Line Search}
+In the case where the end-state of the trajectory is unconstrained, $g(w)$ can be omitted. The solution for each KKT problem can be found by using the Newton-Rhapson method on the KKT conditions. 
+\begin{align}
+    r(w, \mu, \tau) &= \begin{bmatrix}
+    \nabla \mathcal{L}(w, \mu)\\
+    h(w) + s\\
+    \mu_is_i - \tau
+    \end{bmatrix} = 0\\
+    \begin{bmatrix}
+    d^w\\d^\lambda\\d^\mu
+    \end{bmatrix} &= \nabla r(w, \mu, \tau)^{-1} r(w, \mu, \tau)
+\end{align}
+
+It is not possible to guarantee invertibility of $r$ for the SIR-model due to nonlinear dynamics. [\cite{IPOPT_output_ref}] suggests ensuring invertibility by adding a diagonal term $\delta_w$ to the hessian of the lagrangian $\nabla_{ww}\mathcal{L}(w, \mu)$ in $\nabla r(w\mu, \tau)$.
+
+The steps can be constrained to decrease $r(w, \mu, \tau)$ at every iteration with the fraction-to-the-boundary rule:
+\begin{align}
+    \alpha_k^{max} &= \max \{\alpha \in (0,1]: w_k + \alpha d_k^w \geq (1-\tau_j)x_k\}\\
+     \alpha_k^{\mu} &= \max \{\alpha \in (0,1]: \mu_k + \alpha d_k^\mu \geq (1-\tau_j)\mu_k\}\\
+\end{align}
+Where $w$ and $\lambda$ are updated according to $\alpha_k^{max}$, and $\mu$ according to $\alpha^\mu$.
+
+
+
+\subsection{Sequential Quadratic Programming Formulation}
+The problem can be approximated using the hessian of the lagrangian combined with the gradient of the objective, constraint and inequalities:
+\begin{align}
+    \mathcal{L}(x, \lambda, \mu) = \sum_{k=1}^NI_k^2 -W_u u_{k-1}^2 - \lambda g(w) - \mu h(w)
+\end{align}
+
+\begin{mini}|s|
+{d}{\frac{1}{2}d^T \nabla^2_{ww}\mathcal{L}\mathcal(w) d + \nabla \Phi(w)^T d}
+{}{}
+\addConstraint{\nabla g(w)^T d + g(w) = 0}
+\addConstraint{\nabla h(w)^T d + h(w) \leq 0}{}
+\end{mini}
+\subsubsection{Active Set Strategy}
+After determining the current active inequality constraints, the the sequential step and multipliers can be determined from the Karush-Kuhn-Tucker conditions of the problem (Considering the approximated active inequalities $\nabla h_A(w)^T d + h_A(w) \leq 0$ as equality constraints with multiplier $\mu$).
+\begin{equation}
+    \begin{bmatrix}
+    \nabla_{ww}\mathcal{L}(w, \lambda, \mu) & \nabla g(w) & \nabla h_A(w)\\
+    \nabla g(w)^T & 0 & 0\\
+    \nabla h_A(w)^T & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+    d\\
+    \lambda\\
+    \mu_A
+    \end{bmatrix}= 
+    -\begin{bmatrix}
+    \Phi(w)\\
+    g(w)\\
+    h_A(w)
+    \end{bmatrix}
+\end{equation}
+
+In the SIR-problem formulation we have the following boundary inequalities:
+\begin{align}
+    h(w) &= \begin{bmatrix} u_0-u_{min} \\ u_{max}-u_0 \\ \vdots \\
+u_{max}-u_{N-1}
+    \end{bmatrix} & \nabla h(w) &= \begin{bmatrix} 1 \\ -1 \\ \vdots \\1\\
+-1
+    \end{bmatrix}
+\end{align}
+Determining the active set for boundaries is simpler than for other inequalities, since they come in pairs where only one can be active at each iteration.
+
+In the case of independent inequality constraints, the active set has to be determined by testing different steps with different active inequalities until positive multipliers and a feasible step has been achieved.
+
+\subsection{IPOPT with CasADI's Symbolical Framework}
+A single-shooting optimization problem was formulated with CasADI using the symbolical framework, for all three control strategies. Algorithm \ref{alg:PDIPOPT_CasADI_SYM} summarizes the basic loop for converging without $\delta$ or step-corrections.
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{$w = w_0 \in \mathbb{R}^{N_u + N_\mu + N_s}, \tau = 1, \tau_{min} = 1\times 10^{-3}, \Delta w_{tol} = 1\times 10^{-4}$}
+\While {$(\tau > \tau_{tol})$ and $(\Delta w > \Delta w_{tol})$}{
+
+    \While {$w_k > w_{k, tol}$}{
+
+        $w_k = w_k - \nabla r(w, \mu, \tau)^{-1} r(w, \mu, \tau)$
+
+
+    \EndWhile}
+
+    $\Delta w = w_k - w_{k, old}$
+
+    $\tau = 0.9\tau$
+
+\EndWhile}
+
+ \KwRet{$w_k$}
+ \caption{Primal-Dual Interior Point with CasADI symbolical framework}
+ \label{alg:PDIPOPT_CasADI_SYM}
+\end{algorithm}
+
+\subsubsection{Social Distancing}
+
+Reducing step lengths using the fraction-to-the-boundary rule resulted in a very slow convergence with very small steps in $\alpha_k^\mu, \alpha_k^{max}$. While using $\delta$ and small steps is keeping $\nabla r(w, \mu, \tau)$ invertible, it does not converge towards a local optimal solution.
+
+\subsubsection{Vaccination}
+
+Optimization with vaccination policy was solvable without $\delta$ and step-corrections. 
 
 
 \subsection{Interfacing IPOPT in CasADI}

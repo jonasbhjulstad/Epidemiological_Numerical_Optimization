@@ -1,5 +1,5 @@
 \section{Pontryagin's Maximum Principle}
-Optimal control with PMP will consider the continous formulation of the control problem:
+Optimal control with PMP will consider the continous formulations of the control problems.
 \begin{mini*}|s|
 {w}{\int_{t=0}^T I(t)^2 -W_u u(t)^2}
 {}{}
@@ -27,20 +27,29 @@ Constraints $u_{min} \leq u \leq u_{max}$ cannot have the same optimum. However,
     \end{cases}
 \end{align}
 
+The equality constraint multipliers are updated using the jacobian of the hamiltonian:
+\begin{equation}
+    \dot{\lambda} = -\nabla H_x(x, \lambda, u)
+\end{equation}
+
 \subsection{Single-Shooting Algorithm in CasADI}
 The analytical optimal solution for $u$ removes the need for nonlinear optimization and iterations, but CasADI's symbolical framework is still useful for constructing the integrator. 
 
 \begin{algorithm}[H]
 \SetAlgoLined
-\KwData{$x_k = x_0, u = [u_0, \dots, u_{N-1}], h, N$}
+\KwData{$x_k = x_0, u = [u_0, \dots, u_{N-1}],\lambda_k = \lambda_0, h, N$}
 Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
  \For{$i$ = 0 : $N-1$}{
-    $u^*_{c, k} = \argmin_u H(x, \lambda, u)$\\
+    $u^*_{c, k} = \argmin_u H(x, \lambda_k, u)$\\
     $x_k$ = $f(@SIR, x_k, u^*_{c, k}, h)$\\
  }
- \caption{Single-shooting with PMP}
+ \caption{Single-shooting with PMP without TPBV}
  \label{alg:SingleShooting_Integration_PMP}
 \end{algorithm}
+
+The current optimization objective does not have 
+
+
 
 \subsection{Simulations}
 

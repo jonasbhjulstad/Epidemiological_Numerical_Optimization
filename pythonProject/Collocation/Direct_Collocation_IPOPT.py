@@ -65,7 +65,6 @@ if __name__ == '__main__':
     solve='casADI'
     data_path = r'../data/'
     # Time horizon
-    T = 21.
     nx = 3
     nu = 1
     tf = T
@@ -234,7 +233,11 @@ if __name__ == '__main__':
 
     CP = collocation_plot(x_plot, u_plot, thetas, tgrid)
 
-    CP.iteration_plot(5, full_plot=True)
+    fig, axs = CP.iteration_plot(5, full_plot=True)
+    save = True
+    if save:
+        fig.savefig('../Figures/Collocation_Trajectory_' + sim_name + '.eps', format='eps')
+
     # CP.solution_plot(x_opt, u_opt)
 
 

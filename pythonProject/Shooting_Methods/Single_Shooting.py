@@ -152,7 +152,7 @@ if __name__ == '__main__':
     axs[0].set_ylabel('S')
     axs[1].set_ylabel('I')
     axs[2].set_ylabel('R')
-    axs[3].set_ylabel('R0')
+    axs[3].set_ylabel('u')
     _ = [x.set_xticklabels([]) for x in axs[:-1]]
 
     _ = [x.ticklabel_format(axis="y", style="sci", scilimits=(0,0)) for x in axs[:-1]]
@@ -184,4 +184,7 @@ if __name__ == '__main__':
 
     save = False
     if save:
-        fig2.savefig('../Figures/Single_Shooting_obj_con_IPOPT.eps', format='eps')
+        solvername = 'IPOPT'
+        fig.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')
+        fig2.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')
+

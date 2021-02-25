@@ -81,37 +81,13 @@ class collocation_plot(object):
             axs[0].set_ylabel('S')
             axs[1].set_ylabel('I')
             axs[2].set_ylabel('R')
-            axs[3].set_ylabel('R0')
-
-            axs[0].set_title('Collocation Multiple-Shooting N = %i, ' % self.N)
+            axs[3].set_ylabel('u')
+            axs[0].set_title('Collocation Multiple-Shooting N = %i, ' % self.N + " iterations = %i" % self.N_iter)
             plt.show()
+
         else:
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
             plt.draw()
+        return fig, axs
 
-        def cost_plot(self):
-            def f_cost(I, u):
-                return normalizing_factor*(I**2 + Wu/(u**2))
-
-
-            I_vec = np.logspace(0,4.2, 7)
-            u_vec = np.logspace(-5.2, -3, 7)
-
-            I_min_con_x = np.zeros(I_vec.shape)
-
-            X, Y = np.meshgrid(I_vec, u_vec)
-            Z = f_cost(X, Y)
-
-            N_plots = 10
-
-            fig, axs = plt.subplots(5,2)
-
-            for col in axs:
-                for ax in col:
-                    ax.contour(X, Y, Z)
-                    ax.plot([N_pop]*I_vec.shape[0], u_vec)
-                    ax.plot(I_vec, [u_min]*I_vec.shape[0])
-                    ax.set_yscale('log')
-                    ax.set_xscale('log')
-            plt.show()

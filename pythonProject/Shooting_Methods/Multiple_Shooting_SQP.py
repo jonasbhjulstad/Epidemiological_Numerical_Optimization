@@ -24,7 +24,7 @@
 from casadi import *
 from Callbacks.Singleshoot import Singleshoot_CB
 from matplotlib import cm
-from Parameters.Parameters_Vaccination_Flat import *
+from Parameters.Parameters_Social_Distancing import *
 
 nx = 3
 X0 = MX.sym('X0', nx)
@@ -107,18 +107,9 @@ opts['max_iter'] = 1000
 opts['min_step_size'] = 1e-9
 opts['error_on_fail'] = False
 opts['qpsol_options']['error_on_fail'] = False
-# opts["ipopt"] = {}
-# opts["ipopt"]["print_level"] = 5
-
-# IPOPT_CB = IPOPT_Callback()
-# opts["ipopt"]["iteration_callback"] = IPOPT_CB
 
 iter_step = 1
 iter_file = '../data/log.opt'
-# opts["ipopt"]["output_file"] = '../data/log.opt'
-# opts["ipopt"]["file_print_level"] = 5
-# opts["ipopt"]["print_frequency_iter"] = iter_step
-# opts["ipopt"]["print_user_options"] = 'yes'
 opts["calc_f"] = True
 opts["calc_g"] = True
 
@@ -187,7 +178,7 @@ axs[3].step(tgrid, vertcat(DM.nan(1), u_sols[i]), linestyle='',marker='o',marker
 axs[0].set_ylabel('S')
 axs[1].set_ylabel('I')
 axs[2].set_ylabel('R')
-axs[3].set_ylabel('R0')
+axs[3].set_ylabel('u')
 
 axs[0].set_title('RK4 Multiple-Shooting N = %i, ' %N+ "M = %i" %M+ ", f = {:.2e}".format(fval.full()[0][0]) + ", iterations = %i" %len(w_sols))
 

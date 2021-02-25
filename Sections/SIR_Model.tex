@@ -53,23 +53,71 @@ The unstable dynamics is given by the real part of the complex eigenvalues, and 
 \end{align}
 The most unstable achievable dynamic occurs when $\mathscr{R}_0 = \mathscr{R}_{0, max}$ and $\max_{S, I} (S-I)$. Since $S$ is monotonically decreasing, this will occur at $(S, I, R) = (S_0, I_0, R_0)$.
 
-\subsection{Control strategy}
+\subsection{Control strategies}
+Reduction of the number of infected can be achieved using different strategies, including vaccination, quarantine and social distancing measurements. The different types of mitigation will affect the groups in the SIR model differently.  
+
+\subsection{Social Distancing}
 In addition to minimization of the total number of infections, a penalty to the strictness of the social distancing policies can be introduced, resulting in the following minimization problem:
 \begin{equation}
     \min_{w} \Phi(w) = \min_{u = [u_0, \dots, u_k]} \int_{t=0}^{T_{end}} I^2(t) - W_u u^2(t)
 \end{equation}
 
+Where $u$ is given as the reproduction number $\mathscr{R}_0$ in this case. The constant relationship between $N_{pop}, \alpha$ and $\beta$ makes $\mathscr{R}_0$ and $\beta$ only differ in scaling. 
+
+\subsection{Vaccination}
+Vaccination can be implemented as a flow rate from the susceptible to the recovered group. 
+\begin{align}
+    \dot{S} &= -\beta \frac{SI}{N_{pop}} - (\alpha_v S\mbox{ or }  \alpha_v)\\
+    \dot{R} &= \alpha I + \alpha_v S
+\end{align}
+Increased vaccination will be represented as a positive contribution to the objective function. 
+\begin{align}
+    \begin{split}
+    \min_{w} \Phi(w) &= \min_{u = [u_0, \dots, u_k]} \int_{t=0}^{T_{end}} I^2(t) + W_u u^2(t)\\
+    u &= \alpha_v
+    \end{split}
+\end{align}
+
+
+\subsection{Isolation}
+Putting infected individuals in quarantine eliminates their potential infectiousness, and can be viewed as transfering them over to the recovered group.
+\begin{align}
+    \dot{I} &= \beta \frac{SI}{N_{pop}} - (\alpha + \alpha_q) I\\
+    \dot{R} &= (\alpha + \alpha_q) I
+\end{align}
+
+Increased quarantine measures will be represented as a positive contribution to the objective function.
+\begin{align}
+    \begin{split}
+    \min_{w} \Phi(w) &= \min_{u = [u_0, \dots, u_k]} \int_{t=0}^{T_{end}} I^2(t) + W_u u^2(t)\\
+    u &= \alpha_q
+    \end{split}
+\end{align}
+Quarantine rate range is more difficult to estimate due to underreporting, self-isolation and asymptomatic individuals. 
+
 \subsection{Problem Parameters}
 \label{ch:Problem_Parameters}
-The reproduction number will be lower-bounded by the lowest estimated value from FHI's national report on the spread of covid-19 in Norway (03/02-21,[\cite{FHI_report}]), and $\alpha$ will be fixed according to the expected time spent in the infectious class. $\mathscr{R}_0$ will be upper bounded approximately to one of the highest estimates for countries worldwide ([\cite{France_high_R0}]).
+For social distancing the reproduction number will be lower-bounded by the lowest estimated value from FHI's national report on the spread of covid-19 in Norway (03/02-21,[\cite{FHI_report}]).$\mathscr{R}_0$ will be upper bounded approximately to one of the highest estimates for countries worldwide ([\cite{France_high_R0}]). $\alpha$ will be fixed according to the expected time spent in the infectious class[\cite{Infectious_Period}]. 
 \begin{align}
-\alpha &= \frac{1}{5[\text{days}]} = 0.2\\
+\alpha &= \frac{1}{9[\text{days}]} \approx 0.11\\
 \mathscr{R}_0 &\in [0.5, 6.5]
 \end{align}
 
-The default time horizon for the control problems is set to $t \in [0, 28] [\text{days}]$. The population size is set approximately to Norways total population ($N_{pop} = 5.3\times 10^6$), and the initial number of infected is set to $2000$. Unless stated otherwise, the economical weighting factor $W_u$ is set to a value where the cost-reduction of $u(t)$ is large enough to make an impact on the control strategy.
+The default time horizon for the control problems is set to $t \in [0, 28] [\text{days}]$. The population size is set approximately to Norways total population ($N_{pop} = 5.3\times 10^6$), and the initial number of infected is set to $2000$. 
+
+As of 24/02-21, a rough average of the vaccination rate is $\approx 2400$ individuals per day over the past five weeks in Norway. The vaccination rate may be modeled as proportional to $S$, or a flat parameter rate. 
+\begin{equation}
+    \alpha_v \in [0, 3\times2400]
+\end{equation}
+
+An arbitrary range of $\alpha_v \in [0, 1], \alpha_q \in [0, 1]$ is set to view the effect of the proportional terms.
+
+Unless stated otherwise, the economical weighting factor $W_u$ is set to a value where the cost-reduction of $u(t)$ is large enough to make an impact on the control strategy. For social distancing it can be chosen according to equation \ref{eq:Wu_sc}.
 
 \begin{equation}
-    W_u = \frac{N_{pop}**2}{100(u_{max}-u_{min})} \approx 4.68\times 10^{10}
+    W_u = \frac{N_{pop}^2}{k(u_{max}-u_{min})^2}
+    \label{eq:Wu_sc}
 \end{equation}
+
+
 

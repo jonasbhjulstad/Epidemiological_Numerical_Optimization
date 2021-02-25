@@ -63,16 +63,19 @@ Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields
     \label{fig:MS_Cons_Obj_IPOPT}
 \end{figure}
 
-Solving the problem with $x_0$ as initial value for all lifted states yields trajectory shown in figure \ref{}
+Solving the problem with $x_0$ as initial value for all lifted states yields trajectory shown in figure \ref{fig:MS_Traj_IPOPT}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_Trajectory_IPOPT.eps}
-    \caption{Trajectories with multiple shooting using IPOPT (Objective value: $-1.44\times 10^{13}$)}
+    \caption{Trajectories with multiple shooting using IPOPT}
     \label{fig:MS_Traj_IPOPT}
 \end{figure}
 
+\subsubsection{Discussion}
+The lifted states enables the problem to be solved to a better objective value at the cost of more iterations. The partially concave objective function makes the solver converge towards the same local solution as in single shooting, but postpones the lockdown phase for another day.
 
+Choosing infeasible initial conditions results in a better solution of the problem. By setting all lifted states to $x_0$, the IPOPT-solver converges towards a solution with a much longer lockdown-phase, and is effectively able to avoid an epidemic until the end of the control horizon, where the lockdown policies are lifted. The local solution lifts the lockdown-restrictions for a one-day period before the permanent lifting. This would not have a good effect in reality, but illustrates the need for an objective function rewarding gradual lifting of lockdowns. 
 
-
+\subsection{Interfacing QPOASES in CasADI}
 

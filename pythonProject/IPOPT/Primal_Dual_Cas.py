@@ -190,8 +190,8 @@ if __name__ == '__main__':
     plt.show()
     save = True
     if save:
-        fig.savefig('../Figures/Symbolic_IPOPT_Traj.eps', format='eps')
-        fig2.savefig('../Figures/Symbolic_IPOPT_error.eps', format='eps')
+        fig.savefig('../Figures/Symbolic_IPOPT_Traj_' + sim_name + '.eps', format='eps')
+        fig2.savefig('../Figures/Symbolic_IPOPT_error_'+ sim_name + '.eps', format='eps')
 
 
 

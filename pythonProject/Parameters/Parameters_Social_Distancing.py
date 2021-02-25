@@ -37,3 +37,4 @@ u_lb = [u_min]
 u_ub = [u_max]
 u_init = [u_max]
 u0 = u_max
+sim_name = 'Social_Distancing'

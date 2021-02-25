@@ -16,7 +16,7 @@ Wu = N_pop**2/(k*(u_max-u_min)*2)
 R0 = 5
 beta = R0*alpha
 # Model equations
-xdot = vertcat(-beta * S * I / N_pop - u * S, beta * S * I / N_pop - alpha * I, alpha * I + u * S)
+xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I - u*I, alpha * I + u * I)
 I0 = 20000
 x0 = [N_pop - I0, I0, 0]
 # Objective term
@@ -38,4 +38,4 @@ u_ub = [u_max]
 u_init = [u_max]
 u0 = u_max
 
-sim_name = 'Vaccination'
+sim_name = 'Isolation'

@@ -1,30 +1,34 @@
 import numpy as np
 from itertools import combinations, chain, tee
-from FROLS_Scripts import
-import pandas as pd
+from FROLS_Scripts.FROLS import FROLS_volterra, bilinear_term, bilinear_term_generator
+import matplotlib.pyplot as plt
+N_pop = 5.3e6
+I0 = 2000
+x0 = np.array([[N_pop, N_pop - I0, 0]])
+alpha = 1./9
+R0 = 0.7
 
+def SIR_discrete(x, R0):
+    S = x[0]
+    I = x[1]
+    R = x[2]
 
-def generate_data(magnitude=1, loc=0, sigma=1, span=[-3,3], Nu = 200, param=[2, 3, 2, 2]):
-    u = np.random.uniform(span[0], span[1], Nu)
+    u = R0 * alpha
+    return np.array([S - u*S*I/N_pop,
+                     I + u*S*I/N_pop - alpha*I,
+                     R + alpha*I])
 
-    true_model = bilinear_term(param)
+def generate_data(magnitude=1, loc=0, sigma=1, span=[0,.33], Nu = 1000, param=[2, 3, 2, 2]):
+    t = np.linspace(0, 28, Nu)
+    R0_t = R0*(1 + np.sin(t*(2*np.pi)/t[-1]))
 
-    max_y_lag = param[1]
-    max_u_lag = param[0]
-    print(true_model)
-    y_true = np.zeros(max_y_lag + Nu)
-    y = np.zeros(max_y_lag + Nu)
-    for i in range(u.shape[0]-max_u_lag):
-        ik = i + max_y_lag
-        y_prev = y_true[i:ik].reshape((-1,1))
-        u_prev = u[i:ik].reshape((-1,1))
-        Xk = np.concatenate([u_prev, y_prev], axis=1)
-        y_true[ik] = true_model(Xk)
-        y[ik] = y_true[ik] + magnitude * np.random.laplace(loc, sigma)
+    X = np.concatenate([x0, np.zeros((Nu, 3))], axis=0)
 
-    X = np.concatenate([u, y[:-max_y_lag]], axis=1)
+    for i, r in enumerate(R0_t):
+        X[i+1,:] = SIR_discrete(X[i, :], r)
+    X_noise = X + magnitude * np.random.laplace(loc, sigma, X.shape)
 
-    return true_model, X, y, y_true, u
+    return X, X_noise, R0_t
 
 if __name__ == '__main__':
 
@@ -32,14 +36,24 @@ if __name__ == '__main__':
 
 
 
+    X, X_noise, u = generate_data()
 
-    true_model, X, y, y_true, u = generate_data()
+    c = bilinear_term_generator([4,4], 3, X.shape[0])
 
-    X_LS = X[:len(y), :]
+
+    y = X[:-1, :]
+    X_LS = np.concatenate([X[1:,:], u.reshape((-1,1))], axis=1)
     LS_params = np.linalg.inv(X_LS.T @ X_LS) @ (X_LS.T @ y)
 
-    rho = 0.0000001
 
-    g, q, ERR_list, ells, A, p = FROLS(X, y, rho)
+    y = X[:,1]
+    rho = 0.0000001
+    g, q, ERR_list, ells, A, p, chosen_f_idxs = FROLS_volterra(X, y, rho)
+
+    fig, ax = plt.subplots(2)
+    ax[0].plot(y)
+    ax[1].plot(g@q)
+
+
 
 

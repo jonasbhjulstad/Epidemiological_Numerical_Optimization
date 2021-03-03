@@ -26,7 +26,7 @@ from Callbacks.Singleshoot import Singleshoot_CB
 import pandas as pd
 from Parsing.IPOPT_Parse import parse_IPOPT_log
 if __name__ == '__main__':
-    from Parameters.Parameters_Isolation import *
+    from Parameters.Parameters_Vaccination_Flat import *
     for j in range(M):
        k1, k1_q = f(X, U)
        k2, k2_q = f(X + DT/2 * k1, U)
@@ -171,8 +171,8 @@ if __name__ == '__main__':
     lam_x = np.array(CB.lam_x_sols).squeeze()
     [ax2[0].plot(tgrid_u, lam, color=color,marker='', linestyle='-', markersize=2.5) for i, (lam, color) in enumerate(zip(lam_x, colors))]
     [ax2[1].plot(tgrid_u, np.array(Q_plot).squeeze(), color=color) for Q_plot, color in zip(Q_plots, colors)]
-    ax2[0].plot(tgrid_u, lam, color='k',marker='o', linestyle='-', markersize=2.5)
-    ax2[1].plot(tgrid_u, np.array(Q_plot).squeeze(), linestyle='-',marker='o', color='k', markersize=2.5)
+    ax2[0].plot(tgrid_u, lam_x[-1], color='k',marker='o', linestyle='-', markersize=2.5)
+    ax2[1].plot(tgrid_u, np.array(Q_plots[-1]).squeeze(), linestyle='-',marker='o', color='k', markersize=2.5)
     solvername = 'IPOPT'
     ax2[0].set_title(r'Multipliers for bounds on $U$ (' + solvername + ', ' + sim_name + ')')
 
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     ax2[1].set_xlabel('time[days]')
     _ = [x.grid() for x in ax2]
     plt.show()
-    save = False
+    save = True
     if save:
         fig.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')
         fig2.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')

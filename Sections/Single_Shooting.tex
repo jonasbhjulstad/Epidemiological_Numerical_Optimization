@@ -226,20 +226,20 @@ Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
  \label{alg:SingleShooting_Integration_IPOPT}
 \end{algorithm}
 \subsubsection{Social Distancing}
-Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:SH_Traj_IPOPT} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_IPOPT}.
+Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:SH_Traj_IPOPT_SD} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_IPOPT_SD}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Single_Shooting_Trajectory_IPOPT.eps}
-    \caption{Trajectories with single shooting using IPOPT}
-    \label{fig:SH_Traj_IPOPT}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Single_Shooting_Trajectories_IPOPT_Social_Distancing.eps}
+    \caption{Trajectories with single shooting using IPOPT (Social distancing)}
+    \label{fig:SH_Traj_IPOPT_SD}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Single_Shooting_obj_con_IPOPT.eps}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Single_Shoot.eps}
     \caption{Bounds multipliers and objective values for single shooting using IPOPT (Social Distancing)}
-    \label{fig:SH_con_obj_IPOPT}
+    \label{fig:SH_con_obj_IPOPT_SD}
 \end{figure}
 It is clear that the most cost-critical region $t\in [5, 10]$ is considered by the solver when it is searching for a solution. This region contains the highest objective values for the early iterations. The first iterations drastically reduce the objective values, 
 

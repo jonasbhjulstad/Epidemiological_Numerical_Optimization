@@ -176,8 +176,9 @@ if __name__ == '__main__':
     [ax2[1].plot(tgrid_u, np.array(Q_plot).squeeze(), color=color) for Q_plot, color in zip(Q_plots, colors)]
     ax2[0].plot(tgrid_u, lam, color='k',marker='o', linestyle='-', markersize=2.5)
     ax2[1].plot(tgrid_u, np.array(Q_plot).squeeze(), linestyle='-',marker='o', color='k', markersize=2.5)
+    solvername = 'SQP'
 
-    ax2[0].set_title(r'Multipliers for bounds on $U$')
+    ax2[0].set_title(r'Multipliers for bounds on $U$ (' + solvername + ', ' + sim_name + ')')
     fig2.subplots_adjust(hspace=.2)
     ax2[1].set_title(r'Objective values')
     ax2[0].set_xticklabels('')
@@ -187,7 +188,6 @@ if __name__ == '__main__':
 
     save = False
     if save:
-        solvername = 'SQP'
         fig.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')
         fig2.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')
 

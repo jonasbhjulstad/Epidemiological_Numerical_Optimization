@@ -124,7 +124,7 @@ opts["iteration_callback_step"] = iter_step
 # Create an NLP solver
 prob = {'f': J, 'x': vertcat(*w), 'g': vertcat(*g)}
 solver = nlpsol('solver', 'sqpmethod', prob, opts)
-
+solvername = 'SQP'
 # Solve the NLP
 sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
 fval = sol['f']
@@ -182,7 +182,6 @@ axs[3].set_ylabel('u')
 
 axs[0].set_title('RK4 Multiple-Shooting N = %i, ' %N+ "M = %i" %M+ ", f = {:.2e}".format(fval.full()[0][0]) + ", iterations = %i" %len(w_sols))
 
-
 axs[3].set_xlabel('time[days]')
 _ = [x.set_xticklabels([]) for x in axs[:-1]]
 _ = [x.ticklabel_format(axis="y", style="sci", scilimits=(0,0)) for x in axs[:-1]]
@@ -210,7 +209,7 @@ ax2[1].plot(tgrid, lam_x1_sols[i], '-', color = 'k', marker='o', markersize=2.5)
 ax2[2].plot(tgrid, lam_x2_sols[i], '-', color = 'k', marker='o', markersize=2.5)
 ax2[3].plot(tgrid, vertcat(DM.nan(1),lam_u_sols[i]), '-', color = 'k', marker='o', markersize=2.5)
 
-ax2[0].set_title(r'Multipliers for bounds')
+ax2[0].set_title(r'Multipliers for bounds (' + solvername + ', ' + sim_name + ')')
 _ = [x.set_ylabel(s) for s, x in zip(['S', 'I', 'R', 'u'], ax2)]
 # _ = [x.set_yscale('log') for x in ax2]
 fig2.subplots_adjust(hspace=.2)

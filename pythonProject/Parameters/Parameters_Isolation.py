@@ -8,15 +8,17 @@ S = MX.sym('S')
 I = MX.sym('I')
 R = MX.sym('R')
 x = vertcat(S, I, R)
+lbd = MX.sym('lbd', 3)
 u = MX.sym('u')
 u_min = 0
-u_max = 1
-k = 10000
+u_max = .2
+k = 100
 Wu = N_pop**2/(k*(u_max-u_min)*2)
 R0 = 5
 beta = R0*alpha
 # Model equations
 xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I - u*I, alpha * I + u * I)
+hamiltonian = I**2 + Wu*u**2 + lbd[0]*(-u*S - S*I*beta/N_pop) + lbd[1]*(S*I*beta/N_pop - alpha*I)
 I0 = 20000
 x0 = [N_pop - I0, I0, 0]
 # Objective term
@@ -39,3 +41,12 @@ u_init = [u_max]
 u0 = u_max
 
 sim_name = 'Isolation'
+
+
+lbd = MX.sym('lbd', 3)
+xdot_PMP = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I - u*I, u*S + alpha*I)
+
+hamiltonian = I**2 + Wu*u**2 + lbd[0]*(-u*S - S*I*beta/N_pop) + lbd[1]*(S*I*beta/N_pop - alpha*I) + lbd[2]*(alpha*I + u*S)
+grad_H = jacobian(hamiltonian, vertcat(S, I, R))
+F = Function('F', [vertcat(S, I,R, lbd), u], [vertcat(xdot_PMP, -grad_H.T)])
+

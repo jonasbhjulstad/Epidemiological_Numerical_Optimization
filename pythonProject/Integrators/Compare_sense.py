@@ -48,7 +48,7 @@ if __name__ == '__main__':
         marker = ''
         for i, (dt, df) in enumerate(zip(dts, df_list)):
             if dt == dts[-1]:
-                marker = 'o'
+                marker = ''
             t = np.arange(0, 28, dt)
             AS = [[A[0, k] for A in df['A']] for k in range(3)]
             AI = [[A[1, k] for A in df['A']] for k in range(3)]
@@ -67,12 +67,15 @@ if __name__ == '__main__':
         _ = ax3.set_xlabel('time[days]')
         _ = ax3.set_ylim([min(BI), max(BI)])
         _ = [x.set_title(key + ' sensitivities') for key, x in zip(['S', 'I'], [ax1[1], ax2[1]])]
-        _ = ax3.set_title(r'$\mathscr{R}_0$ sensitivity to I')
+        _ = ax3.set_title(r'$u$ sensitivity to I')
         _ = ax0[1].set_title('Trajectories')
         plt.show()
+        fig.subplots_adjust(hspace=.5)
 
-        A_norms = [np.mean(np.linalg.norm(df['A'])) for df in diff_list]
-        B_norms = [np.mean(np.linalg.norm(df['B'])) for df in diff_list]
+        # A_norms = [np.mean(np.linalg.norm(df['A'])) for df in diff_list]
+        A_norms = [np.mean(np.mean(df['A'])) for df in diff_list]
+        # B_norms = [np.mean(np.linalg.norm(df['B'])) for df in diff_list]
+        B_norms = [np.mean(np.mean(df['B'])) for df in diff_list]
 
 
 
@@ -80,8 +83,9 @@ if __name__ == '__main__':
         fig3, ax3 = plt.subplots()
         ax3.scatter(dts, A_norms)
         ax3.scatter(dts, B_norms)
-        ax3.set_yscale('linear')
+        ax3.set_yscale('log')
         ax3.set_xscale('log')
+        ax3.grid()
 
 
         plt.show()

@@ -37,28 +37,28 @@ add initial condition bounds
  \label{alg:MultipleShooting_Integraion}
 \end{algorithm}
 
-In order to get comparable performance to single shooting, the multiple shooting scheme should be initialized with the same initial trajectory for the lifted states.
+In order to get comparable performance to single shooting, the multiple shooting scheme should be initialized with the same initial trajectory for the lifted states. RK4 and 
 \subsubsection{Results}
-Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories, bounds multipliers, constraints multipliers and objective values respectively shown in figure \ref{fig:MS_Traj_IPOPT}, \ref{fig:MS_Bounds_IPOPT}, \ref{fig:MS_Cons_Obj_IPOPT} (Using the same initial trajectory as in single shooting). In order to illustrate the advantages of lifting the states, another simulation can be run using $x_0$ as initial value for all lifted states.
+Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories, bounds multipliers, constraints multipliers and objective values respectively shown in figure \ref{fig:MS_Traj_SD_IPOPT}, \ref{fig:MS_Bounds_SD_IPOPT}, \ref{fig:MS_Cons_Obj_IPOPT} (Using the same initial trajectory as in single shooting). In order to illustrate the advantages of lifting the states, another simulation can be run using $x_0$ as initial value for all lifted states.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial.eps}
-    \caption{Trajectories with multiple shooting using IPOPT (feasible initial states)}
-    \label{fig:MS_Traj_IPOPT}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_Social_Distancing.eps}
+    \caption{Trajectories with multiple shooting using IPOPT}
+    \label{fig:MS_Traj_SD_IPOPT}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_bounds_IPOPT_traj_initial.eps}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_bounds_IPOPT_traj_initial_Social_Distancing.eps}
     \caption{Boundary multipliers with multiple shooting using IPOPT}
-    \label{fig:MS_Bounds_IPOPT}
+    \label{fig:MS_Bounds_SD_IPOPT}
 \end{figure}
 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial.eps}
+    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_Social_Distancing.eps}
     \caption{Constraints and objective values multiple shooting using IPOPT}
     \label{fig:MS_Cons_Obj_IPOPT}
 \end{figure}
@@ -77,5 +77,4 @@ The lifted states enables the problem to be solved to a better objective value a
 
 Choosing infeasible initial conditions results in a better solution of the problem. By setting all lifted states to $x_0$, the IPOPT-solver converges towards a solution with a much longer lockdown-phase, and is effectively able to avoid an epidemic until the end of the control horizon, where the lockdown policies are lifted. The local solution lifts the lockdown-restrictions for a one-day period before the permanent lifting. This would not have a good effect in reality, but illustrates the need for an objective function rewarding gradual lifting of lockdowns. 
 
-\subsection{Interfacing QPOASES in CasADI}
 

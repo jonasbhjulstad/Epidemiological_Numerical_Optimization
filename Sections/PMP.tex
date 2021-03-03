@@ -1,5 +1,6 @@
 \section{Pontryagin's Maximum Principle}
 Optimal control with PMP will consider the continous formulations of the control problems.
+\todo{I do think this is the correct formulation, considering that control inputs $u$ are chosen at every timestep. For the IPOPT/SQP objective formulations the problem is condensed, so in this case I assume that the objective is partially concave? Work in progress}
 \begin{mini*}|s|
 {w}{\int_{t=0}^T I(t)^2 -W_u u(t)^2}
 {}{}
@@ -27,31 +28,84 @@ Constraints $u_{min} \leq u \leq u_{max}$ cannot have the same optimum. However,
     \end{cases}
 \end{align}
 
-The equality constraint multipliers are updated using the jacobian of the hamiltonian:
+The equality constraint multipliers are updated using the jacobian of the hamiltonian, yielding the following differential equations and conditions:
+\begin{align}
+    \begin{split}
+    \dot{x} &= F(x, u)\\
+    \dot{\lambda} &= -\nabla H_x(x, \lambda, u)\\
+    x(t_0) &= x_0\\
+    \lambda(t_f) &= 0
+    \end{split}
+\end{align}
+The two point boundary value problem must be solved. Since $\lambda_0$ is unavailable $\lambda(t_f)$ must be solved by repeatedly 'guessing' $\lambda_0$ and simulating the system forward. The initial guess can be corrected using Newton-Rhapson for each simulation:
 \begin{equation}
-    \dot{\lambda} = -\nabla H_x(x, \lambda, u)
+    \lambda(t_0) = \lambda(t_0) - \frac{\partial \lambda(t_f)}{\partial \lambda(t_0)}^{-1} \lambda(t_f)
 \end{equation}
 
-\subsection{Single-Shooting Algorithm in CasADI}
+\subsection{Single-Shooting}
 The analytical optimal solution for $u$ removes the need for nonlinear optimization and iterations, but CasADI's symbolical framework is still useful for constructing the integrator. 
 
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwData{$x_k = x_0, u = [u_0, \dots, u_{N-1}],\lambda_k = \lambda_0, h, N$}
 Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
+\While{$\lambda(t_f) > tol$}{
  \For{$i$ = 0 : $N-1$}{
     $u^*_{c, k} = \argmin_u H(x, \lambda_k, u)$\\
     $x_k$ = $f(@SIR, x_k, u^*_{c, k}, h)$\\
+    $\lambda_k$ = $f(@(-\nabla_xH(x, \lambda_k, u^*_{c,k})), x_k, u^*_{c,k}, h)$
  }
- \caption{Single-shooting with PMP without TPBV}
+     $\lambda_0 = \lambda_0 - \frac{\partial \lambda(t_f)}{\partial \lambda_0}^{-1} \lambda(t_f)$\\
+     $\lambda_k = \lambda_0$
+ }
+ \caption{Single-shooting with PMP}
  \label{alg:SingleShooting_Integration_PMP}
 \end{algorithm}
 
-The current optimization objective does not have 
+\subsection{Results}
+\subsubsection{Vaccination}
+\subsubsection{Social Distancing}
+\subsubsection{Isolation}
 
+\subsection{Multiple-Shooting}
+Newton-Rhapson in PMP may struggle to converge both due to initial guess $\lambda(t_0)$ and the system dynamics. To account for this, the states can be lifted in order to give multiple sets of constraints to be satisfied.
 
+\begin{align}
+    \begin{bmatrix}
+    x(t_0) - x_0\\
+    x_1 - f(@SIR, x_0, u^*_{c, 0}, h)\\
+    \lambda_1 - f(@(-\nabla_xH(x_0, \lambda_0, u^*_{c,0})), x_0, u^*_{c,0}, h)\\
+    \vdots\\
+    x_1 - f(@SIR, x_{N-1}, u^*_{c, N-1}, h)\\
+    \lambda_N - f(@(-\nabla_xH(x_{N-1}, \lambda_{N-1}, u^*_{c,{N-1}})), x_{N-1}, u^*_{c,N-1}, h)\\
+    \lambda_N
+    \end{bmatrix} = 0
+\end{align}
 
-\subsection{Simulations}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{$X = MX\in \mathbb{R}^{N\times 3}, \lambda = MX\in \mathbb{R}^{N\times 3}, u = [u_0, \dots, u_{N-1}],\lambda_0, h, N$}
+Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
+
+$r = []$\\
+ \For{$i$ = 0 : $N-1$}{
+    $u^*_{c, k} = \argmin_u H(x, \lambda_k, u)$\\
+    add $x_k - f(@SIR, x_k, u^*_{c, k}, h)$ to g\\
+    add $\lambda_k - f(@(-\nabla_xH(x, \lambda_k, u^*_{c,k})), x_k, u^*_{c,k}, h)$ to r
+ }
+ Set initial guess $S_0 = [x_0, \lambda_0, \dots, x_f, \lambda_f]$\\
+ \While{$|r(S_k)| > tol$}{
+     $S_k = S_k - \frac{\partial r(S_k)}{\partial S_k}^{-1} r(S_k)$\\
+ }
+ \caption{Multiple-shooting with PMP}
+ \label{alg:Multiple_Shooting_Integration_PMP}
+\end{algorithm}
+
+\todo{Implementation in CasADI}
+\subsection{Results}
+\subsubsection{Vaccination}
+\subsubsection{Social Distancing}
+\subsubsection{Isolation}
 
 
 

@@ -225,7 +225,7 @@ Construct integrator $f(ODE, x, u, h)$ with CasADI-symbolics\\
  \caption{Single-shooting with IPOPT}
  \label{alg:SingleShooting_Integration_IPOPT}
 \end{algorithm}
-\subsubsection{Results}
+\subsubsection{Social Distancing}
 Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:SH_Traj_IPOPT} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_IPOPT}.
 
 \begin{figure}[H]
@@ -238,7 +238,7 @@ Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\textwidth]{pythonProject/Figures/Single_Shooting_obj_con_IPOPT.eps}
-    \caption{Bounds multipliers and objective values for single shooting using IPOPT}
+    \caption{Bounds multipliers and objective values for single shooting using IPOPT (Social Distancing)}
     \label{fig:SH_con_obj_IPOPT}
 \end{figure}
 It is clear that the most cost-critical region $t\in [5, 10]$ is considered by the solver when it is searching for a solution. This region contains the highest objective values for the early iterations. The first iterations drastically reduce the objective values, 

@@ -37,6 +37,8 @@ Figure \ref{fig:RK4_Stability} shows the stability region of explicit runge-kutt
     \label{fig:RK4_Stability}
 \end{figure}
 
+The bilinear SIR-model will have unstable regions which require the integrator step length to be set sufficiently low in order to get accurate steps.
+
 \subsection{Sensitivities}
 
 
@@ -108,7 +110,7 @@ Both approaches require partial derivatives of the SIR-ODE:
     \label{eq:dFdu_SIR}
 \end{align}
 
-Using equations \ref{eq:dFdx_SIR} and \ref{eq:dFdx_SIR}, the two approaches for sensitivity were implemented with the RK4 scheme in Python. Simulating the system with a reproduction number $\mathscr{R}_0 = 10$ and $\alpha = \frac{1}{3}$ (average recovery time of 3 days) yields different results depending on the step time $\Delta t$.
+Using equations \ref{eq:dFdx_SIR} and \ref{eq:dFdu_SIR}, the two approaches for sensitivity were implemented with the RK4 scheme in Python.
 
 \begin{figure}[h]
     \centering
@@ -121,10 +123,11 @@ Using equations \ref{eq:dFdx_SIR} and \ref{eq:dFdx_SIR}, the two approaches for 
 The susceptible and infected sensitivities with respect to the susceptible and infected populations (plots $[1:2,1:2]$) show that the most fragile timepoints of the epidemic occurs when the product of susceptibles and infected are highest. The third column shows sensitivities with respect to the recovered individuals.
 
 Even though automatic differentiation should present a smaller integration error, it was not possible to find visible differences between the two approaches using stepsizes down to $\Delta t = 1e-5$. When compared to the 'true' trajectories, they presented the same errors.
-
+\newpage
 \subsection{Bounds and Nonlinearity}
-The SIR-model itself is a Lipschitz, continously differentiable ODE which with the variational RK4-scheme approach also has continous dynamics for the sensitivities. It is visible in figure \ref{fig:RK4_Autodiff} that the maximum sensitivities of the susceptible and infected states are found at $S = I$ for $\mathscr{R}_0 > 1$. Values at this point is found at the equilibrium point of the sensitivity equations:
-
+The SIR-model itself is a Lipschitz, continously differentiable ODE which with the variational RK4-scheme approach also has continous dynamics for the sensitivities. It is visible in figure \ref{fig:RK4_Autodiff} that the maximum sensitivities of the susceptible and infected states are found at $S = I$ for $\mathscr{R}_0 > 1$.
+\todo{Add more}
+\iffalse
 \begin{align}
         &\frac{\partial F}{\partial x}|_{x(t),u_k} A(t) = 0\\
  &\frac{\partial F}{\partial x}|_{x(t), u_k} B(t) + \frac{\partial F}{\partial u}|_{x(t), u_k} = 0
@@ -150,6 +153,7 @@ Where $A$ and $b$ is given by the buther tableau. Inserting the eigenvalue corre
 \begin{equation}
     R_{E, max}(\lambda \Delta t) = det[I- \frac{\beta_{max}(S_0-I_0) - \alpha}{2N} \Delta t(A - 1b^T)]
 \end{equation}
+\fi
 \subsection{Integrators: Collocation}
 A collocation integrator constructs the trajectory using
 parameters $\theta$ on a time grid of $d+1$ points in $[t_k, t_{k+1})$ ($[\tau_0, \tau_1, \dots, \tau_d]$). Parameters $theta$ are constrained to equal the value of the trajectory at these points, giving the full trajectory as a sum of lagrange polynomials:

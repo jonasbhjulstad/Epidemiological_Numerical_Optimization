@@ -26,7 +26,7 @@ from Callbacks.Singleshoot import Singleshoot_CB
 import pandas as pd
 from Parsing.IPOPT_Parse import parse_IPOPT_log
 if __name__ == '__main__':
-    from Parameters.Parameters_Vaccination_Flat import *
+    from Parameters.Parameters_Isolation import *
     for j in range(M):
        k1, k1_q = f(X, U)
        k2, k2_q = f(X + DT/2 * k1, U)
@@ -186,5 +186,5 @@ if __name__ == '__main__':
     save = True
     if save:
         fig.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')
-        fig2.savefig('../Figures/Single_Shooting_Trajectories_'+ solvername + '_' + sim_name + '.eps', format='eps')
+        fig2.savefig('../Figures/Single_Shooting_obj_con_'+ solvername + '_' + sim_name + '.eps', format='eps')
 

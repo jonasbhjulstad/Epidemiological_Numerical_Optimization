@@ -27,6 +27,8 @@ import pandas as pd
 from Parsing.IPOPT_Parse import parse_IPOPT_log
 if __name__ == '__main__':
     from Parameters.Parameters_Social_Distancing import *
+    u_min = 6.5
+    u_max = 6.5
     for j in range(M):
        k1, k1_q = f(X, U)
        k2, k2_q = f(X + DT/2 * k1, U)

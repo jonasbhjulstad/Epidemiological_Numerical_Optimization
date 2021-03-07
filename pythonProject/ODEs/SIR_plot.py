@@ -2,63 +2,41 @@ from ODEs.SIR import SIR, SIR_linearized
 from RK4.Integrator import RK4_Integrator
 import numpy as np
 import matplotlib.pyplot as plt
+from Parameters.Parameters_Vaccination_Flat import *
+from tqdm import tqdm
 if __name__ == '__main__':
 
-    T_end = 20
-    tspan = np.linspace(0,T_end, 10000)
+    N_iter = 100000
+    tspan = np.linspace(0,T, N_iter+1)
     DT = np.diff(tspan)
-    alpha = 0.1
-    R0 = 10
     beta = R0*alpha
 
-    N = 10000
 
-    I0 = 100
-    S0 = N-I0
-    param = [alpha, R0, N]
-    X0 = [N-I0, I0, 0]
-    def SIR_linearized(x, U):
-        global S0
-        global I0
-        J = np.array([[-beta*I0/N, -beta*S0/N, 0],
-                      [beta*I0/N, beta*S0/N-alpha, 0],
-                      [0, alpha, 0]])
-        return J @ x
 
-    ode = lambda x, R0: SIR(x, alpha, N, R0)
-    X = [X0]
-    X_J = [X0]
-    firsttime = True
-    for i, dt in enumerate(DT):
-        X.append(RK4_Integrator(ode, X[-1], R0, dt))
-        X_J.append(RK4_Integrator(SIR_linearized, X_J[-1], R0, dt))
-        if (X_J[-1][1] > N) and firsttime:
-            t_cross = tspan[i]
-            firsttime = False
+    Xk = x0
+    X = np.zeros((3, N_iter+1))
+    X[:,0] = x0
+    
+    for k in range(N_iter):
+        Xk, _ = f(Xk, u_max)
+        X[:, k] = Xk.full()[:,0]
 
-    S = [x[0] for x in X]
-    I = [x[1] for x in X]
-    R = [x[2] for x in X]
+    fig, ax = plt.subplots(3)
 
-    S_J = [x[0] for x in X_J]
-    I_J = [x[1] for x in X_J]
-    R_J = [x[2] for x in X_J]
-
-    ax = plt.subplot()
-
-    Nx = len(X)
-    tspan = tspan[:Nx]
     # ax[0].plot(tspan, S)
     # ax[0].plot(tspan, S_J)
     # ax[0].set_ylim([0,N])
 
-    ax.plot(tspan, I, color='k', label='ODE')
-    ax.plot(tspan, I_J, '--', color='k', label='Linearization')
-    ax.plot(np.full(Nx, t_cross), np.linspace(0, N, Nx), '-.', 'k', label='I = N')
-    ax.set_ylim([0,N])
-    ax.set_xlim([0,tspan[-1]])
-    ax.set_title('SIR-ODE and Linearization with $R_0 = 10, $')
-    plt.grid('small')
+    _ = [x.plot(tspan, j, color='k', label=name) for x, j, name in zip(ax, X, ['S', 'I', 'R'])]
+
+
+    # ax.plot(tspan, I_J, '--', color='k', label='Linearization')
+    # ax.plot(np.full(Nx, t_cross), np.linspace(0, N, Nx), '-.', 'k', label='I = N')
+    # ax.set_ylim([0,N])
+    # ax.set_xlim([0,tspan[-1]])
+    ax[0].set_title('RK4 N = 10000, $\mathscr{R}_0$ = 6.5')
+    ax[-1].set_xlabel('Time [days]')
+    plt.grid()
     plt.legend()
 
 

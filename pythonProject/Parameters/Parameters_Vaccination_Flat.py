@@ -13,11 +13,11 @@ u_min = 0
 u_max = 1
 k = 10000
 Wu = N_pop**2/(k*(u_max-u_min)*2)
-R0 = 5
+R0 = 6.5
 beta = R0*alpha
 # Model equations
 xdot = vertcat(-beta * S * I / N_pop - u * S, beta * S * I / N_pop - alpha * I, alpha * I + u * S)
-I0 = 20000
+I0 = 500000
 x0 = [N_pop - I0, I0, 0]
 # Objective term
 L = I ** 2 + Wu * u ** 2

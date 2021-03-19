@@ -8,23 +8,36 @@ Optimal control with PMP will consider the continous formulations of the control
 \addConstraint{\dot{x}(t) = F(x(t), u(t))}
 \addConstraint{u_{max} \geq u(t) \geq u_{min}, \quad \forall t \in [0, T)}{}
 \end{mini*}
-Where $F(.)$ is the SIR ODE-dynamics. The hamiltonian for the problem becomes:
+Where $F(.)$ is the SIR ODE-dynamics. The hamiltonians for the problem becomes:
 \begin{align}
     H(x, \lambda, u) &= L(I(t), u(t)) + \lambda^T F(x(t), u(t))\\
-    = I(t)^2 - W_u &u(t)^2 + (\lambda_1 - \lambda_0)\cdot u(t)\frac{S(t)I(t)}{N_{pop}} + (\lambda_3 -\lambda_1) \alpha I(t)
+    H_{SD}(x, \lambda, u) &= I(t)^2 - W_u u(t)^2 + (\lambda_1 - \lambda_0)\cdot u(t)\frac{S(t)I(t)}{N_{pop}}\\ &+ (\lambda_2 -\lambda_1) \alpha I(t)\nonumber\\
+    H_{V}(x, \lambda, u) &= I(t)^2 + W_uu(t)^2 + (\lambda_1 - \lambda_0)\cdot \beta \frac{S(t)I(t)}{N_{pop}} \\&- (\lambda_0 + \lambda_2) u + (\lambda_2 -\lambda_1) \alpha I(t)\nonumber\\
+    H_{q}(x, \lambda, u) &= I(t)^2 + W_uu(t)^2 + (\lambda_1 - \lambda_0)\cdot \beta \frac{S(t)I(t)}{N_{pop}} \\&- (\lambda_1 + \lambda_2) u + (\lambda_2 -\lambda_1) \alpha I(t)\nonumber
 \end{align}
-Minimizing the hamiltonian every timestep will minimize the objective function. In this case it is possible to derive an unconstrained solution:
+Minimizing the hamiltonian every timestep will minimize the objective function. In the case of social distancing ($H_{SD}$) it is possible to derive an unconstrained solution:
 \begin{align}
-    \argmin_u  H(u) &\rightarrow u = \pm \infty %\frac{\partial H(x, \lambda, u)}{\partial u} = 0\\
+    \argmin_u  H_{SD}(x, \lambda, u) &\rightarrow u^* = \pm \infty %\frac{\partial H(x, \lambda, u)}{\partial u} = 0\\
      %u &= \frac{(\lambda_1-\lambda_0)}{2W_u}\cdot \frac{S(t)I(t)}{N_{pop}}
 \end{align}
 Constraints $u_{min} \leq u \leq u_{max}$ cannot have the same optimum. However, the concavity of hamiltonian with respect to $u$ ensures that the following holds for constrained $u_c^*(t)$:
 \begin{align}
-    u^*(t) &= \argmin_u H(x, \lambda, u)\\
+    u^*(t) &= \argmin_u H_{SD}(x, \lambda, u)\\
     u_c^*(t) &= \begin{cases}
-    u_{min} \mbox{ if } u^*(t) < u_{min}\\
-    u^*(t) \mbox{ if } u_{min} \leq u^*(t) \leq u_{max}\\
-    u_{max} \mbox{ if } u^*(t) > u_{max}
+    u_{min} \mbox{ if } H_{SD}(x, \lambda, u_{min}) < H_{SD}(x, \lambda, u_{max})\\
+    u_{max} \mbox{ otherwise }
+    \end{cases}
+\end{align}
+
+In the case of vaccination and isolation control ($H_V, H_q$) the minimization problem is convex.
+
+\begin{align}
+    u^*_V(t) &= \argmin_u H_{V}(x, \lambda, u)\rightarrow u^*_V = -\frac{\lambda_2-\lambda_0}{2W_u}\\
+    u^*_q(t) &= \argmin_u H_{q}(x, \lambda, u)\rightarrow u^*_q = -\frac{\lambda_2 - \lambda_1}{2W_u}\\
+    u_{c}^*(t) &= \begin{cases}
+    u_{min} \mbox{ if } u^* < u_{min}\\
+    u^* \mbox{ if } u_{min} \leq u^* \leq u_{max}\\
+    u_{max}  \mbox{ if } u^* > u_{max}\\
     \end{cases}
 \end{align}
 

@@ -1,9 +1,6 @@
 from casadi import *
-T = 28.  # Time horizon
-N = 50  # number of control intervals
-N_pop = 5.3e6
-alpha = .1/9
 # Declare model variables
+from Parameters.ODE_initial import *
 S = MX.sym('S')
 I = MX.sym('I')
 R = MX.sym('R')
@@ -11,18 +8,22 @@ x = vertcat(S, I, R)
 u = MX.sym('u')
 u_min = .5
 u_max = 6.5
-Wu = N_pop**2/(1000000*(u_max-u_min)*2)
+lbd = MX.sym('lbd', 3)
+Wu = N_pop**2/(k*(u_max-u_min)*2)
 beta = u*alpha
 # Model equations
-xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I, alpha * I)
-I0 = 20000
-x0 = [N_pop - I0, I0, 0]
-# Objective term
 L = I ** 2 - Wu * u ** 2
+xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I, alpha * I)
+hamiltonian = L + lbd.T @ xdot
+grad_h = jacobian(hamiltonian, x).T
+s_dot = Function('s_dot', [vertcat(x, lbd), u], [vertcat(xdot, -grad_h)])
+grad_h_u = Function('grad_h_u', [u, vertcat(x, lbd)], [jacobian(hamiltonian, u)])
 
+
+
+x0 = [N_pop - I0, I0, 0]
 # Formulate discrete time dynamics
 # Fixed step Runge-Kutta 4 integrator
-M = 30  # RK4 steps per interval
 DT = T / N / M
 h = DT *M #(Collocation step)
 f = Function('f', [x, u], [xdot, L])

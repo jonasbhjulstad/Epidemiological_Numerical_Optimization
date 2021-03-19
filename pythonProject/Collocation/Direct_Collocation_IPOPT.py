@@ -1,8 +1,4 @@
-# coding=utf-8
-# This is a sample Python script.
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 from casadi import *
 # from ODEs.SIR import SIR
 import numpy as np
@@ -22,8 +18,16 @@ def SIR(X, R0):
     beta = R0*alpha
     return vertcat(-beta * X[0, :] * X[1, :]/N_pop, beta * X[0, :] * X[1, :]/N_pop - alpha * X[1, :], alpha * X[1, :])
 
-if __name__ == '__main__':
-    from Parameters.Parameters_Social_Distancing import *
+def DirectCollocationMain(param, do_solve=True, save=True):
+
+
+    if param == 'Social Distancing':
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T
+    elif param == 'Isolation':
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T
+    elif param == 'Vaccination':
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T
+
     plt.close()
 
     d = 3
@@ -61,7 +65,6 @@ if __name__ == '__main__':
         pint = np.polyint(p)
         B[j] = pint(1.0)
 
-    do_solve = True
     solve='casADI'
     data_path = r'../data/'
     # Time horizon

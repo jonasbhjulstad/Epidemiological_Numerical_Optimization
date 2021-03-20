@@ -124,6 +124,7 @@ The susceptible and infected sensitivities with respect to the susceptible and i
 
 Even though automatic differentiation should present a smaller integration error, it was not possible to find visible differences between the two approaches using stepsizes down to $\Delta t = 1e-5$. When compared to the 'true' trajectories, they presented the same errors.
 \newpage
+\iffalse
 \subsection{Bounds and Nonlinearity}
 The SIR-model itself is a Lipschitz, continously differentiable ODE which with the variational RK4-scheme approach also has continous dynamics for the sensitivities. It is visible in figure \ref{fig:RK4_Autodiff} that the maximum sensitivities of the susceptible and infected states are found at $S = I$ for $\mathscr{R}_0 > 1$.
 \todo{Add more}
@@ -142,7 +143,7 @@ State $R$ can be excluded from the analysis, yielding a $2\times 2$ analysis:
     \end{bmatrix}
 \end{equation}
 Inserting the 
-
+\fi
 
 \subsubsection{Instability and Step Length}
 As shown in \ref{ch:SIR_stability} the SIR-model will have local unstable dynamics, which in turn cause unstable integration errors. The errors will have to be restricted using small enough integration steps. The instability of the integrator can be determined by:

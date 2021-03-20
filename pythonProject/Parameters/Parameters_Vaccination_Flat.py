@@ -9,13 +9,13 @@ R = MX.sym('R')
 x = vertcat(S, I, R)
 lbd = MX.sym('lbd', 3)
 u = MX.sym('u')
-u_min = 0.10
+u_min = 0.01
 u_max = 1
 # Wu = N_pop**2/(k*(u_max-u_min)*2)
 Wu = 1
 beta = R0*alpha
 # Model equations
-N = 200
+N = 52
 L = I ** 2 + Wu * u ** 2
 xdot = vertcat(-beta * S * I / N_pop - u, beta * S * I / N_pop - alpha * I, alpha * I + u)
 hamiltonian = L + lbd.T @ xdot

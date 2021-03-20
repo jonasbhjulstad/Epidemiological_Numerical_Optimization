@@ -48,15 +48,11 @@ if __name__ == '__main__':
     r = vertcat(grad_lag, h + s, mu*s - tau)
 
     Fr = Function('r',[w, tau], [r])
+    fh = Function('fh', [w], [h])
     Fr_obj = Function('r_obj', [tau], [r])
     Nr = Fr.sx_out(0).shape[0]
     Nw = w.shape[0]
     Nu = U.shape[0]
-    delta_w = 1
-    delta_c = 1e-3
-    posdef_deltamat = DM.zeros(Nr, Nr)
-    posdef_deltamat[0:Nu, 0:Nu] = DM.eye(Nu)*delta_w
-    posdef_deltamat[Nu:, Nu:] = -DM.eye(Nr-Nu)*delta_c
 
 
 
@@ -84,59 +80,46 @@ if __name__ == '__main__':
     separate_w = Function('separate_w', [w], [U, mu, s])
     mu_s_vec = Function('mu_s', [w], [vertcat(mu, s)])
     wk_list = [wk]
-    tol = 1e-3
+    tol = .5
 
     s_mu_g = -vertcat(s, mu)
     s_mu_lb = np.full((1, Nh), -inf)
     s_mu_ub = np.zeros((1,Nh))
     tau_b = 1-1e-5
 
-    def max_step(x, d):
-        alpha = 1
-        condition = DM([1])
-        while not condition.is_zero():
-            alpha = ((1-tau_b)*x - x)
-            condition = (x + alpha * d) < ((1 - tau_b) * x)
-            alpha*=0.9
-        return alpha
-
     max_iter = 100
     wk_diff = 1000
     wk_diff_list = []
-    wk_diff_tol = 1e-4
+    wk_diff_tol = 10
     tau = 1
-    while (wk_diff > wk_diff_tol) or (tau > 0.1):
+    beta = .8
+    alpha = .5
+    nu = 0.1
+    while (wk_diff > wk_diff_tol) or (tau > 1e-3):
         print(tau, wk_diff)
         error_k = tol + 1
         iter = 0
         wk_old = wk
         error = tol + 1
-        while (error > tol) and (iter < max_iter):
-            fk = Fr(wk, tau)
+        fk = Fr(wk, tau)
+        while ((error > tol) or max(0, norm_1(hk)) > tol) and (iter < max_iter):
             jFr = jac_Fr(wk, tau)
-            # for i in range(Nr):
-            #     if jFr[i, i] < 0:
-            #         jFr[i,i] = 1e3
-            # d = -la.inv(jFr) @ fk
-            # d_x, d_mu, d_s = separate_w(d)
-            # xk, mu_k, s_k = separate_w(wk)
-            #
-            # # alpha_s = max_step(s_k, d_s)
-            # # alpha_mu = max_step(mu_k, d_mu)
-            # alpha_s = 1
-            # alpha_mu = 1
-            #
-            # xk = xk + alpha_s*d_x
-            # s_k = s_k + alpha_s*d_s
-            # mu_k = mu_k + alpha_mu*d_mu
-
-
-            # wk = vertcat(xk, s_k, mu_k)
-            wk = wk - la.inv(jac_Fr(wk, tau)) @ Fr(wk, tau)
+            delta_w = - la.inv(jac_Fr(wk, tau)) @ fk
+            hk = fh(wk)
+            t = 1
+            Tk = fk + nu * sum([max(0, h_i) for h_i in hk.full()])
+            while norm_1(Tk) >= norm_1(Tk + alpha*t*jac_Fr(wk, tau).T @ delta_w):
+                t *= beta
+                hk = fh(wk + alpha*t*delta_w)
+                Tk = Fr(wk + alpha*t * delta_w, tau) + nu*sum([max(0, h_i) for h_i in hk.full()])
+            wk = wk + alpha*t*delta_w
+            fk = Fr(wk, tau)
             error = norm_1(fk)
+            print(t, error)
+
         wk_diff = norm_1(wk_old-wk)
         wk_diff_list.append(wk_diff)
-        tau *=.9
+        tau *=.5
         if np.any(np.isnan(wk)):
             break
             #print('Alphas: ' + str(alpha_s) + ', ' + str(alpha_mu) + ', error: ' + str(error))

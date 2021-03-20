@@ -7,11 +7,11 @@ from Collocation.Direct_Collocation_IPOPT import DirectCollocationMain
 
 if __name__ == '__main__':
 
-    for param in ['Social Distancing', 'Isolation', 'Vaccination']:
+    for param in ['Isolation', 'Vaccination']:
         # SingleShootSQP_main(param)
         # SingleShoot_main(param)
-        MultiShoot_main(param, traj_initial=True)
-        MultiShoot_main(param, traj_initial=False)
+        # MultiShoot_main(param, traj_initial=True)
+        # MultiShoot_main(param, traj_initial=False)
         MultiShootSQP_main(param, traj_initial=True)
         MultiShootSQP_main(param, traj_initial=False)
         DirectCollocationMain(param)

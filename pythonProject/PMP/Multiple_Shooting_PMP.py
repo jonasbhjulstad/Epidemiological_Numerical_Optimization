@@ -100,7 +100,7 @@ def Multiple_shooting_PMP(param):
     f_r = Function('f_r', [w, U], [g])
     grad_r = Function('grad_r', [w, U], [jacobian(f_r(w, U), w)])
 
-    Sk = DM(np.concatenate([x0_num, [10.1, 20, 10]]))
+    Sk = DM(np.concatenate([x0_num, [1, 2, 0.001]]))
     w0 = repmat(Sk, N)
     tol = 1e-3
     cond = tol + 1

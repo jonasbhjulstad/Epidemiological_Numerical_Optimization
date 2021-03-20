@@ -4,6 +4,7 @@ from Callbacks.Singleshoot import Singleshoot_CB
 from matplotlib import cm
 from Parameters.Parameters_Social_Distancing import *
 def MultiShootSQP_main(param, traj_initial=False, save=True):
+    print("Solving ")
     if param == 'Social Distancing':
         from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
     elif param == 'Isolation':

@@ -22,11 +22,11 @@ def DirectCollocationMain(param, do_solve=True, save=True):
 
 
     if param == 'Social Distancing':
-        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
     elif param == 'Isolation':
-        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
     elif param == 'Vaccination':
-        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
 
     plt.close()
 
@@ -71,11 +71,7 @@ def DirectCollocationMain(param, do_solve=True, save=True):
     nx = 3
     nu = 1
     tf = T
-    S = MX.sym('S')
-    I = MX.sym('I')
-    R = MX.sym('R')
-    x = vertcat(S, I, R)
-    u = MX.sym('u')
+
 
 
     # Start with an empty NLP
@@ -244,4 +240,5 @@ def DirectCollocationMain(param, do_solve=True, save=True):
     # CP.solution_plot(x_opt, u_opt)
 
 
-
+if __name__ == '__main__':
+    DirectCollocationMain('Social Distancing')

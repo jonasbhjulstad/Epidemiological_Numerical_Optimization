@@ -71,21 +71,24 @@ if __name__ == '__main__':
         _ = ax0[1].set_title('Trajectories')
         plt.show()
         fig.subplots_adjust(hspace=.5)
-
+        import numpy.linalg as la
         # A_norms = [np.mean(np.linalg.norm(df['A'])) for df in diff_list]
-        A_norms = [np.mean(np.mean(df['A'])) for df in diff_list]
+        A_norms = [la.norm(la.norm(df['A'])) for df in diff_list]
         # B_norms = [np.mean(np.linalg.norm(df['B'])) for df in diff_list]
-        B_norms = [np.mean(np.mean(df['B'])) for df in diff_list]
+        B_norms = [la.norm(la.norm(df['B'])) for df in diff_list]
 
 
 
 
         fig3, ax3 = plt.subplots()
-        ax3.scatter(dts, A_norms)
-        ax3.scatter(dts, B_norms)
+        ax3.scatter(dts, A_norms, marker='x', color='k', label=r'$||||A_{var}-A_{auto}||_F||_F$')
+        ax3.scatter(dts, B_norms, marker='o', color='k', label=r'$||||B_{var}-B_{auto}||_F||_F$')
         ax3.set_yscale('log')
         ax3.set_xscale('log')
+        ax3.legend()
         ax3.grid()
 
 
         plt.show()
+
+        fig3.savefig('../Figures/Sensitivity_Comparison.eps', format='eps')

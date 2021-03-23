@@ -85,11 +85,10 @@ def Multiple_shooting_PMP(param):
         Sk_end = f(Sk, Uk)
 
         # New NLP variable for state at end of interval
-        if k < (N - 1):
-            Sk = MX.sym('S_' + str(k + 1), 2 * nx)
-            w += [Sk]
-            # Add equality constraint
-            g += [Sk_end - Sk]
+        Sk = MX.sym('S_' + str(k + 1), 2 * nx)
+        w += [Sk]
+        # Add equality constraint
+        g += [Sk_end - Sk]
 
     g += [Sk[nx:]]
 
@@ -100,8 +99,8 @@ def Multiple_shooting_PMP(param):
     f_r = Function('f_r', [w, U], [g])
     grad_r = Function('grad_r', [w, U], [jacobian(f_r(w, U), w)])
 
-    Sk = DM(np.concatenate([x0_num, [1, 2, 0.001]]))
-    w0 = repmat(Sk, N)
+    Sk = DM(np.concatenate([x0_num, [1, 2, 10]]))
+    w0 = repmat(Sk, N+1)
     tol = 1e-3
     cond = tol + 1
     lam_tol = 1e-3
@@ -109,6 +108,7 @@ def Multiple_shooting_PMP(param):
     U_sols = []
 
 
+    alpha = 1
     while norm_1(lam_f) > lam_tol:
         U = []
         Sk = w0[:2*nx]
@@ -123,7 +123,13 @@ def Multiple_shooting_PMP(param):
         errs = [err]
         while err > tol:
             fk = f_r(wk, U)
-            wk = wk - la.inv(grad_r(wk, U)) @ fk
+            delta_w = -la.inv(grad_r(wk, U)) @ fk
+            wk = wk + delta_w
+            t = 1
+            while(norm_1(f_r(wk + delta_w, U)) > norm_1(fk + alpha*t*grad_r(wk, U).T @ delta_w)):
+                t *= .9
+            wk = wk + alpha*t*delta_w
+            fk = f_r(wk, U)
             err = norm_1(fk)
             errs.append(err)
             print(err)

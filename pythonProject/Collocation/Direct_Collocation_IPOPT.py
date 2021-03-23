@@ -200,6 +200,7 @@ def DirectCollocationMain(param, do_solve=True, save=True):
         opts = {}
         opts['iteration_callback'] = CB
         opts['ipopt.max_iter'] = 10000
+        opts['ipopt.output_file'] = '../data/log.opt'
 
         prob = {'f': J, 'x': w, 'g': g}
         solver = nlpsol('solver', 'ipopt', prob, opts);

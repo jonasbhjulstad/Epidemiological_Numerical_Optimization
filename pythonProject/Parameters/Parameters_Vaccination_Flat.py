@@ -17,7 +17,7 @@ beta = R0*alpha
 # Model equations
 N = 52
 L = I ** 2 + Wu * u ** 2
-xdot = vertcat(-beta * S * I / N_pop - u, beta * S * I / N_pop - alpha * I, alpha * I + u)
+xdot = vertcat(-beta * S * I / N_pop - S*u, beta * S * I / N_pop - alpha * I, alpha * I + S*u)
 hamiltonian = L + lbd.T @ xdot
 grad_h_u = Function('grad_h_u', [u, vertcat(x, lbd)], [jacobian(hamiltonian, u)])
 grad_h = jacobian(hamiltonian, x).T

@@ -8,7 +8,11 @@
 \addConstraint{f(x_{N-1}, u_{N-1}) - x_{N} = 0}
 \addConstraint{u_{max} \geq u_k \geq u_{min}}{}
 \end{mini*}
-Where $f(.)$ is the trajectory from $x_k$ to $x_{k+1}$. The RK4-integrator can be replaced by collocation constraints resulting in a direct collocation scheme.
+Where $f(.)$ is the trajectory from $x_k$ to $x_{k+1}$. The problem can be formulated in CasADI by modifying algorithm \ref{alg:SingleShooting_Integraion} to capture intermediate states, bounds and constraints:
+
+
+
+The RK4-integrator can be replaced by collocation constraints resulting in a direct collocation scheme.
 
 \subsection{Interfacing IPOPT in CasADI}
 
@@ -33,21 +37,21 @@ add initial condition bounds
  \label{alg:MultipleShooting_Integraion}
 \end{algorithm}
 
-In order to get comparable performance to single shooting, the multiple shooting scheme should be initialized with the same initial trajectory for the lifted states.
-\subsubsection{Results (RK4)}
+In order to get comparable performance to single shooting, the multiple shooting scheme should be initialized with the same initial trajectory for the lifted states. RK4 and 
+\subsubsection{Results}
 Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories, bounds multipliers, constraints multipliers and objective values respectively shown in figure \ref{fig:MS_Traj_SD_IPOPT}, \ref{fig:MS_Bounds_SD_IPOPT}, \ref{fig:MS_Cons_Obj_IPOPT} (Using the same initial trajectory as in single shooting). In order to illustrate the advantages of lifting the states, another simulation can be run using $x_0$ as initial value for all lifted states.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_Social_Distancing.eps}
-    \caption{Trajectories with multiple shooting using IPOPT (Social Distancing)}
+    \caption{Trajectories with multiple shooting using IPOPT}
     \label{fig:MS_Traj_SD_IPOPT}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_bounds_IPOPT_traj_initial_Social_Distancing.eps}
-    \caption{Boundary multipliers with multiple shooting using IPOPT (Social Distancing)}
+    \caption{Boundary multipliers with multiple shooting using IPOPT}
     \label{fig:MS_Bounds_SD_IPOPT}
 \end{figure}
 
@@ -55,7 +59,7 @@ Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_Social_Distancing.eps}
-    \caption{Constraints and objective values multiple shooting using IPOPT (Social Distancing)}
+    \caption{Constraints and objective values multiple shooting using IPOPT}
     \label{fig:MS_Cons_Obj_IPOPT}
 \end{figure}
 
@@ -64,18 +68,8 @@ Solving the problem with $x_0$ as initial value for all lifted states yields tra
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_Trajectory_IPOPT.eps}
-    \caption{Trajectories with multiple shooting using IPOPT (Social Distancing)}
+    \caption{Trajectories with multiple shooting using IPOPT}
     \label{fig:MS_Traj_IPOPT}
-\end{figure}
-
-\subsubsection{Results (Collocation)}
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/D.eps}
-    \caption{Trajectories with multiple shooting using IPOPT (Social Distancing)}
-    \label{fig:MS_Traj_SD_IPOPT}
 \end{figure}
 
 \subsubsection{Discussion}

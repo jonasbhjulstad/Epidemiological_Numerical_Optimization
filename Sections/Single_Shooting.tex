@@ -90,18 +90,6 @@ The steps can be constrained to decrease $r(w, \mu, \tau)$ at every iteration wi
 \end{align}
 Where $w$ and $\lambda$ are updated according to $\alpha_k^{max}$, and $\mu$ according to $\alpha^\mu$.
 
-Armijo's backtracking line search ensures that the step in the quadratic approximated direction leads to descent.
-
-\begin{algorithm}[H]
-\SetAlgoLined
-\KwData{$w, t = 1, \alpha \leq \frac{1}{2}$}
-\While{$||\Phi(w + \Delta w)||> ||\Phi(w) + \alpha t \nabla \Phi(w)^T \Delta w||$}{
-    $t = \beta t$
-\EndWhile}
-\KwRet{$w + t\alpha \Delta w, $}
-\caption{Newton steps with Armijo's backtracking line search}
-\label{alg:Armijos_backtrack}
-\end{algorithm}
 
 
 \subsection{Sequential Quadratic Programming Formulation}
@@ -115,7 +103,6 @@ The problem can be approximated using the hessian of the lagrangian combined wit
 {}{}
 \addConstraint{\nabla g(w)^T d + g(w) = 0}
 \addConstraint{\nabla h(w)^T d + h(w) \leq 0}{}
-\label{eq:SQP_problem}
 \end{mini}
 \subsubsection{Active Set Strategy}
 After determining the current active inequality constraints, the the sequential step and multipliers can be determined from the Karush-Kuhn-Tucker conditions of the problem (Considering the approximated active inequalities $\nabla h_A(w)^T d + h_A(w) \leq 0$ as equality constraints with multiplier $\mu$).
@@ -135,7 +122,6 @@ After determining the current active inequality constraints, the the sequential 
     g(w)\\
     h_A(w)
     \end{bmatrix}
-    \label{eq:active_set_solve_SQP}
 \end{equation}
 
 In the SIR-problem formulation we have the following boundary inequalities:
@@ -149,29 +135,6 @@ u_{max}-u_{N-1}
 Determining the active set for boundaries is simpler than for other inequalities, since they come in pairs where only one can be active at each iteration.
 
 In the case of independent inequality constraints, the active set has to be determined by testing different steps with different active inequalities until positive multipliers and a feasible step has been achieved.
-
-\subsubsection{Line Search with Inequalities}
-Newtons method minimizes the quadratic approximation of objective $\Phi(w)$. Due to the discontinuity of inequality constraints, any $\Phi(w)$ subject to them can be solved by imposing newton steps on sequential approximation of $\Phi(w)$. In order to ensure that the objective converges within the inequality constraints, the line search must be performed on a $T_1$ merit function.
-\begin{equation}
-    T_1(w) = \Phi(w) + \nu \sum_{i=1}^m \max(0, h_i(w))
-\end{equation}
-
-\begin{algorithm}[H]
-\SetAlgoLined
-\KwData{$w, \mu, g = []$}
-\While {$||\nabla \mathcal{L}||$ or $\max (0, h) \geq$ tol}{
-    Formulate SQP (equation \ref{eq:SQP_problem})\\
-    Solve for $\Delta w$ (equation \ref{eq:active_set_solve_SQP}, $h_A = h$)\\
-    Perform line search with merit function to update $w, \mu$\\
-    (equation \ref{alg:Armijos_backtrack}, \Phi = T_1)\\
-\EndWhile}
-
- \KwRet{$w, \mu$}
- \caption{SQP Line Search Algorithm for inequalities}
- \label{alg:SQP_Linesearch}
-\end{algorithm}
-
-
 
 \subsection{IPOPT with CasADI's Symbolical Framework}
 A single-shooting optimization problem was formulated with CasADI using the symbolical framework, for all three control strategies. Algorithm \ref{alg:PDIPOPT_CasADI_SYM} summarizes the basic loop for converging without $\delta$ or step-corrections.
@@ -287,47 +250,4 @@ Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields
 Passing 'sqpmethod' to $nlpsol(.)$ makes it possible to solve the same problem formulation as algorithm \ref{alg:SingleShooting_Integration_IPOPT}.
 
 \subsubsection{Results}
-Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:SH_Traj_SQP_SD} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_SQP_SD}.
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_Trajectory_SQP_Social_Distancing.eps}
-    \caption{Trajectories with single shooting using QPOASES (Social distancing)}
-    \label{fig:SH_Traj_SQP_SD}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_SQP_Social_Distancing.eps}
-    \caption{Bounds multipliers and objective values for single shooting using SQP (Social Distancing)}
-    \label{fig:SH_con_obj_SQP_SD}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_Trajectory_SQP_Social_Distancing.eps}
-    \caption{Trajectories with single shooting using QPOASES (Isolation)}
-    \label{fig:SH_Traj_SQP_I}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_obj_con_SQP_Social_Distancing.eps}
-    \caption{Bounds multipliers and objective values for single shooting using SQP (Isolation)}
-    \label{fig:SH_con_obj_SQP_I}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/Multiple_Shooting_Trajectory_SQP_Social_Distancing.eps}
-    \caption{Trajectories with single shooting using QPOASES (Vaccination)}
-    \label{fig:SH_Traj_SQP_V}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{pythonProject/Figures/SQO}
-    \caption{Bounds multipliers and objective values for single shooting using SQP (Vaccination)}
-    \label{fig:SH_con_obj_SQP_V}
-\end{figure}
+Simulating with parameters defined in section \ref{ch:Problem_Parameters} yields trajectories shown in figure \ref{fig:} and multiplier and objective values shown in figure \ref{fig:SH_con_obj_IPOPT}.

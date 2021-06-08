@@ -52,22 +52,19 @@ class collocation_plot(object):
             return S_traj, I_traj, R_traj
 
 
-        def theta_plot(theta_k, x_plot, u_plot, axs, color='k', marker='', markersize=3):
+        def theta_plot(theta_k, x_plot, u_plot, axs, iter, color='k', marker='', markersize=3):
             S_traj, I_traj, R_traj = calc_poly_traj(theta_k.values)
             [axs[0].plot(tk, s, color=color) for tk, s in zip(self.tgrid_poly, S_traj)]
             [axs[1].plot(tk, i, color=color) for tk, i in zip(self.tgrid_poly, I_traj)]
             [axs[2].plot(tk, r, color=color) for tk, r in zip(self.tgrid_poly, R_traj)]
 
-            # axs[0].plot(self.tgrid, x_plot.values[0,:-1].T)
-            # axs[1].plot(self.tgrid, x_plot.values[1,:-1].T)
-            # axs[2].plot(self.tgrid, x_plot.values[2,:-1].T)
-
-            axs[3].plot(tgrid_u, u_plot, color=color)
+            axs[3].step(tgrid_u, u_plot, color=color)
             if marker != '':
-                [axs[0].plot([tk[0], tk[-1]], [s[0], s[-1]], color=color, marker=marker, markersize=markersize) for tk, s in zip(self.tgrid_poly, S_traj)]
-                [axs[1].plot([tk[0], tk[-1]], [i[0], i[-1]], color=color, marker=marker, markersize=markersize) for tk, i in zip(self.tgrid_poly, I_traj)]
-                [axs[2].plot([tk[0], tk[-1]], [r[0], r[-1]], color=color, marker=marker, markersize=markersize) for tk, r in zip(self.tgrid_poly, R_traj)]
-                axs[3].plot([tgrid_u[0], tgrid_u[-1]], [u_plot[0], u_plot[-1]], color=color, marker=markersize, markersize=2.5)
+                [axs[0].plot([tk[0], tk[-1]], [s[0], s[-1]], color='k', marker=marker, markersize=markersize) for tk, s in zip(self.tgrid_poly, S_traj)]
+                [axs[1].plot([tk[0], tk[-1]], [i[0], i[-1]], color='k', marker=marker, markersize=markersize) for tk, i in zip(self.tgrid_poly, I_traj)]
+                [axs[2].plot([tk[0], tk[-1]], [r[0], r[-1]], color='k', marker=marker, markersize=markersize) for tk, r in zip(self.tgrid_poly, R_traj)]
+                axs[3].step(tgrid_u, u_plot, color='k', marker=marker, markersize=2.5)
+
 
 
         fig, axs = plt.subplots(4)
@@ -79,43 +76,19 @@ class collocation_plot(object):
         if full_plot:
             iter_steps = np.arange(self.iter, self.N_iter, iteration_step)
             colormap = cm.get_cmap('Greys', len(iter_steps))
-            colors = colormap(np.linspace(.1, .8, len(iter_steps)))
-            [theta_plot(self.thetas[iter],self.x_plot[iter], self.u_plot[iter], axs, color=colors[i] ) for i, iter in enumerate(iter_steps)]
-            theta_plot(self.thetas[-1],self.x_plot[-1], self.u_plot[-1], axs, color=colors[-1], marker='o', markersize=3)
+            colors = colormap(np.linspace(.1, .6, len(iter_steps)))
+            [theta_plot(self.thetas[iter],self.x_plot[iter], self.u_plot[iter], axs, iter, color=colors[i]) for i, iter in enumerate(iter_steps)]
+            theta_plot(self.thetas[-1],self.x_plot[-1], self.u_plot[-1], axs, self.N_iter, color=colors[-1], marker='o', markersize=3)
             axs[0].set_ylabel('S')
             axs[1].set_ylabel('I')
             axs[2].set_ylabel('R')
-            axs[3].set_ylabel('R0')
-
-            axs[0].set_title('Collocation Multiple-Shooting N = %i, ' % self.N)
+            axs[3].set_ylabel('u')
+            axs[0].set_title('Collocation Multiple-Shooting N = %i, ' % self.N + " iterations = %i" % self.N_iter)
             plt.show()
+
         else:
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
             plt.draw()
+        return fig, axs
 
-        def cost_plot(self):
-            def f_cost(I, u):
-                return normalizing_factor*(I**2 + Wu/(u**2))
-
-
-            I_vec = np.logspace(0,4.2, 7)
-            u_vec = np.logspace(-5.2, -3, 7)
-
-            I_min_con_x = np.zeros(I_vec.shape)
-
-            X, Y = np.meshgrid(I_vec, u_vec)
-            Z = f_cost(X, Y)
-
-            N_plots = 10
-
-            fig, axs = plt.subplots(5,2)
-
-            for col in axs:
-                for ax in col:
-                    ax.contour(X, Y, Z)
-                    ax.plot([N_pop]*I_vec.shape[0], u_vec)
-                    ax.plot(I_vec, [u_min]*I_vec.shape[0])
-                    ax.set_yscale('log')
-                    ax.set_xscale('log')
-            plt.show()

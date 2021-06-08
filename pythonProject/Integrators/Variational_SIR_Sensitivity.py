@@ -1,18 +1,22 @@
 import numpy as np
+import sys
+from os.path import dirname, abspath
+parent = dirname(dirname(abspath(__file__)))
+sys.path.append(parent)
 from ODEs.SIR import SIR
 import matplotlib.pyplot as plt
 import pickle as pck
 import pandas as pd
-
+N_pop = 5.3e6
 def dF_dx(x, u, alpha):
-    return np.array([[-u * x[1], -u * x[0], 0],
-                     [u * x[1], u * x[0] - alpha, 0],
+    return np.array([[-u * alpha *x[1]/N_pop, -u * alpha* x[0]/N_pop, 0],
+                     [u * alpha *x[1]/N_pop, u * alpha* x[0]/N_pop - alpha, 0],
                      [0, alpha, 0]])
 
 
 def dF_du(x):
-    return np.array([-x[0] * x[1],
-                     x[0] * x[1],
+    return np.array([-x[0] * x[1]/N_pop,
+                     x[0] * x[1]/N_pop,
                      0])
 def A_ODE(x, u, alpha, A):
     Adot = np.matmul(dF_dx(x, u, alpha), A)
@@ -45,18 +49,22 @@ def RK4(F, F_A, F_B, x, h, A, B):
     return xk_1, Ak_1, Bk_1
 
 
-def Variational_SIR_Sensitivity(dt,start=0 , stop=0,plot=False, save = False):
+def Variational_SIR_Sensitivity(dt,start=0 , stop=28,plot=False, save = False):
 
-    X0 = np.array([997, 3, 0])
-    N = np.sum(X0)
-    alpha = 1.0/3.0
-    R0 = 10
-    u = R0*alpha/N
+    T = 28.  # Time horizon
+    # Declare model variables
+    I0 = 2000
+    u_min = 0.5
+    alpha = 0.2
 
-    F = lambda x: SIR(x, alpha, u)
+    R0 = 6.5
+    u = R0
+    t = np.arange(start, stop,dt)
+    X0 = [N_pop - I0, I0, 0]
+
+    F = lambda x: SIR(x, alpha,N_pop,  u)
     F_A = lambda x, S: A_ODE(x, u, alpha, S)
     F_B = lambda x, S: B_ODE(x, u, alpha, S)
-    t = np.arange(0,18,dt)
 
     A = [np.eye(3)]
     x = [X0]

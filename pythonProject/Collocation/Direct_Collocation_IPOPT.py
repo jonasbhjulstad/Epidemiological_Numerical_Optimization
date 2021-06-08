@@ -1,9 +1,9 @@
-# coding=utf-8
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+''
 from casadi import *
+import sys
+from os.path import dirname, abspath
+parent = dirname(dirname(abspath(__file__)))
+sys.path.append(parent)
 # from ODEs.SIR import SIR
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,21 +15,24 @@ import pickle as pck
 import xarray as xr
 # Press the green button in the gutter to run the script.
 
-N_pop = 10000
-alpha = 0.1
+
 
 
 def SIR(X, R0):
     beta = R0*alpha
     return vertcat(-beta * X[0, :] * X[1, :]/N_pop, beta * X[0, :] * X[1, :]/N_pop - alpha * X[1, :], alpha * X[1, :])
 
-if __name__ == '__main__':
+def DirectCollocationMain(param, do_solve=True, save=True):
+
+
+    if param == 'Social Distancing':
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
+    elif param == 'Isolation':
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
+    elif param == 'Vaccination':
+        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
+
     plt.close()
-    u_lb = [1e-4]
-    u_ub = [10]
-    u_init = [1]
-    Wu = 1000
-    I0 = 1000
 
     d = 3
     B, C, D, tau_root = collocation_coeffs(d)
@@ -66,39 +69,14 @@ if __name__ == '__main__':
         pint = np.polyint(p)
         B[j] = pint(1.0)
 
-    do_solve = True
     solve='casADI'
     data_path = r'../data/'
     # Time horizon
-    T = 21.
     nx = 3
     nu = 1
     tf = T
-    S = MX.sym('S')
-    I = MX.sym('I')
-    R = MX.sym('R')
-    x = vertcat(S, I, R)
-    u = MX.sym('u')
-    Wu = 0.01
 
 
-    alpha = 0.2
-    beta = u * alpha
-    N_pop = 10000
-    I0 = 2000
-    x0 = [N_pop - I0, I0, 0]
-    # Model equations
-    xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I, alpha * I)
-
-    # Objective term
-    L = I ** 2 - Wu * u ** 2
-
-    # Continuous time dynamics
-    f = Function('f', [x, u], [xdot, L], ['x', 'u'], ['xdot', 'L'])
-
-    # Control discretization
-    N = 50  # number of control intervals
-    h = T / N
 
     # Start with an empty NLP
     w = []
@@ -119,8 +97,7 @@ if __name__ == '__main__':
         x_min = [0,0,0]
         x_max = [N_pop, N_pop, N_pop]
 
-    u_min = 0.5
-    u_max = 6.5
+
     u0 = u_max
     # For plotting x and u given w
     x_plot = []
@@ -227,6 +204,7 @@ if __name__ == '__main__':
         opts = {}
         opts['iteration_callback'] = CB
         opts['ipopt.max_iter'] = 10000
+        opts['ipopt.output_file'] = '../data/log.opt'
 
         prob = {'f': J, 'x': w, 'g': g}
         solver = nlpsol('solver', 'ipopt', prob, opts);
@@ -259,8 +237,13 @@ if __name__ == '__main__':
 
     CP = collocation_plot(x_plot, u_plot, thetas, tgrid)
 
-    CP.iteration_plot(5, full_plot=True)
+    fig, axs = CP.iteration_plot(5, full_plot=True)
+    save = True
+    if save:
+        fig.savefig('../Figures/Trajectories/Collocation_Trajectory_' + sim_name + '.eps', format='eps')
+
     # CP.solution_plot(x_opt, u_opt)
 
 
-
+if __name__ == '__main__':
+    DirectCollocationMain('Isolation')

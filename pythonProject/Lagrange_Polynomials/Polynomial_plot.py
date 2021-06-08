@@ -1,4 +1,8 @@
 import matplotlib.pyplot as plt
+import sys
+from os.path import dirname, abspath
+parent = dirname(dirname(abspath(__file__)))
+sys.path.append(parent)
 from Collocation.collocation_coeffs import collocation_coeffs
 from matplotlib.patches import Polygon
 

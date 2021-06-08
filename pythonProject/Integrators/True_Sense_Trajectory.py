@@ -1,4 +1,8 @@
 import numpy as np
+import sys
+from os.path import dirname, abspath
+parent = dirname(dirname(abspath(__file__)))
+sys.path.append(parent)
 from ODEs.SIR import SIR
 from scipy import integrate
 import pandas as pd

@@ -21,63 +21,63 @@
 #     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-#! Callback
-#! =====================
+# ! Callback
+# ! =====================
 from casadi import *
 from numpy import *
 
 
-class Singleshoot_CB(Callback):
-  def __init__(self, name, nx, ng, nu,iter_step, opts={}):
-    Callback.__init__(self)
+class Iteration_Callback(Callback):
+    def __init__(self, name, nx, ng, iter_step, opts={}, nu=1):
+        Callback.__init__(self)
 
-    self.nx = nx
-    self.nu = nu
-    self.ng = ng
-    self.nx_ode = 3
+        self.nx = nx
+        self.nu = nu
+        self.ng = ng
+        self.nx_ode = 3
 
-    self.x_sols = []
-    self.f_sols = []
-    self.g_sols = []
-    self.lam_x_sols = []
-    self.lam_g_sols = []
-    self.lam_p_sols = []
-    self.iter = []
-    self.iter_step = iter_step
-    self.I_thetas = []
-    # Initialize internal objects
-    self.construct(name, opts)
+        self.x_sols = []
+        self.f_sols = []
+        self.g_sols = []
+        self.lam_x_sols = []
+        self.lam_g_sols = []
+        self.lam_p_sols = []
+        self.iter = []
+        self.iter_step = iter_step
+        self.I_thetas = []
+        # Initialize internal objects
+        self.construct(name, opts)
 
-  def get_n_in(self): return nlpsol_n_out()
-  def get_n_out(self): return 1
-  def get_name_in(self, i): return nlpsol_out(i)
-  def get_name_out(self, i): return "ret"
+    def get_n_in(self): return nlpsol_n_out()
+    def get_n_out(self): return 1
+    def get_name_in(self, i): return nlpsol_out(i)
+    def get_name_out(self, i): return "ret"
 
-  def get_sparsity_in(self, i):
-    n = nlpsol_out(i)
-    if n=='f':
-      return Sparsity. scalar()
-    elif n in ('x', 'lam_x'):
-      return Sparsity.dense(self.nx)
-    elif n in ('g', 'lam_g'):
-      return Sparsity.dense(self.ng)
-    else:
-      return Sparsity(0,0)
-  def eval(self, arg):
-    # Create dictionary
-    if self.iter == []:
-      self.iter = [0]
-    else:
-      self.iter.append(self.iter[-1] + self.iter_step)
-    darg = {}
-    for (i,s) in enumerate(nlpsol_out()): darg[s] = arg[i]
-    x_sol = [float(elem) for elem in darg['x'].full()]
+    def get_sparsity_in(self, i):
+        n = nlpsol_out(i)
+        if n == 'f':
+            return Sparsity.scalar()
+        elif n in ('x', 'lam_x'):
+            return Sparsity.dense(self.nx)
+        elif n in ('g', 'lam_g'):
+            return Sparsity.dense(self.ng)
+        else:
+            return Sparsity(0, 0)
 
-    self.x_sols.append(x_sol)
-    self.f_sols.append(darg['f'].full()[0][0])
-    self.g_sols.append(darg['g'].full())
-    self.lam_x_sols.append(darg['lam_x'].full())
-    self.lam_g_sols.append(darg['lam_g'].full())
-    self.lam_p_sols.append(darg['lam_p'].full())
-    return [0]
+    def eval(self, arg):
+        # Create dictionary
+        if not self.iter:
+            self.iter = [0]
+        else:
+            self.iter.append(self.iter[-1] + self.iter_step)
+        darg = {}
+        for (i, s) in enumerate(nlpsol_out()): darg[s] = arg[i]
+        x_sol = [float(elem) for elem in darg['x'].full()]
 
+        self.x_sols.append(x_sol)
+        self.f_sols.append(darg['f'].full()[0][0])
+        self.g_sols.append(darg['g'].full())
+        self.lam_x_sols.append(darg['lam_x'].full())
+        self.lam_g_sols.append(darg['lam_g'].full())
+        self.lam_p_sols.append(darg['lam_p'].full())
+        return [0]

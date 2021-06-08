@@ -5,6 +5,10 @@ plt.style.use('seaborn-white')
 from matplotlib import cm
 import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
+import sys
+from os.path import dirname, abspath
+parent = dirname(dirname(abspath(__file__)))
+sys.path.append(parent)
 from Collocation.collocation_coeffs import collocation_coeffs
 from Lagrange_Polynomials.Polynomial_plot import Collocation_Trajectory
 import numpy as np

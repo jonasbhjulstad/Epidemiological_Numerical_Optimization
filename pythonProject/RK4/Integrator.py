@@ -3,10 +3,10 @@ from casadi import *
 
 
 def RK4_Integrator(f, X, U, DT):
-    k1 = f(X, U)
-    k2 = f(X + DT / 2 * k1, U)
-    k3 = f(X + DT / 2 * k2, U)
-    k4 = f(X + DT * k3, U)
+    k1, _ = f(X, U)
+    k2, _ = f(X + DT / 2 * k1, U)
+    k3, _ = f(X + DT / 2 * k2, U)
+    k4, _ = f(X + DT * k3, U)
     X = X + DT / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
     return X
 
@@ -42,9 +42,10 @@ def RK4_M_times_plot(F, M, h, nx=3, nu=1):
         k3, k3_q = F(X + DT / 2 * k2, u)
         k4, k4_q = F(X + DT * k3, u)
         X += DT / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
-        Q += DT / 6 * (k1_q + 2 * k2_q + 2 * k3_q + k4_q)
+        Qk = DT / 6 * (k1_q + 2 * k2_q + 2 * k3_q + k4_q)
+        Q += Qk
         X_plot.append(X)
-        Q_plot.append(Q)
+        Q_plot.append(Qk)
     f = Function('f', [X0, u], [X, Q])
     X_plot = Function('X_plot', [X0, u], [vertcat(*X_plot)])
     Q_plot = Function('Q_plot', [X0, u], [vertcat(*Q_plot)])
@@ -73,3 +74,4 @@ def integrator_N_times_plot(fk, N, Xk_plot, Qk_plot, nx=3, nu=1):
     Q_plot = Function('Q_plot', [X0, U], [vertcat(*Q_plot)])
     f = Function('f', [X0, U], [vertcat(*X), Q])
     return f, X_plot, Q_plot
+

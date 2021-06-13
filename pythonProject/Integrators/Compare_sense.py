@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 from Autodiff_SIR_Sensitivity import Autodiff_SIR_Sensitivity
 from Variational_SIR_Sensitivity import Variational_SIR_Sensitivity
 from matplotlib import cm
+from Parameters.ODE_initial import *
 from tqdm import tqdm
 
 if __name__ == '__main__':
-    dts = np.flip(np.logspace(-4,0,5))
+    dts = np.flip(np.linspace(0.01,15,5))
     dfs_auto = []
     dfs_var = []
     # dt = 1e-4
@@ -18,9 +19,9 @@ if __name__ == '__main__':
 
     for dt in tqdm(dts):
         if auto:
-            dfs_auto.append(Autodiff_SIR_Sensitivity(dt))
+            dfs_auto.append(Autodiff_SIR_Sensitivity(dt, stop=T))
         if var:
-            dfs_var.append(Variational_SIR_Sensitivity(dt))
+            dfs_var.append(Variational_SIR_Sensitivity(dt, stop = T))
     df_plot_list = []
     df_plot_list.append(dfs_auto)
     df_plot_list.append(dfs_var)
@@ -49,16 +50,14 @@ if __name__ == '__main__':
         for i, (dt, df) in enumerate(zip(dts, df_list)):
             if dt == dts[-1]:
                 marker = ''
-            t = np.arange(0, 28, dt)
             AS = [[A[0, k] for A in df['A']] for k in range(3)]
             AI = [[A[1, k] for A in df['A']] for k in range(3)]
             BI = [B[1] for B in df['B']]
-
+            t = np.arange(0, T, dt)
             _ = [x.plot(t, df[key], color = colors[i], marker=marker, markersize=2.5) for x, key in zip(ax0, ['S', 'I', 'R'])]
             _ = [x.plot(t, AS[k], color = colors[i], marker=marker, markersize=2.5) for k, x in enumerate(ax1)]
             _ = [x.plot(t, AI[k], color = colors[i], marker=marker, markersize=2.5) for k, x in enumerate(ax2)]
             _ = ax3.plot(t, BI, color = colors[i], marker=marker, markersize=2.5)
-        N_pop = 5.3e6
         _ = [x.set_ylim([0,N_pop]) for x in ax0]
         _ = [x.set_ylim([min(AS[k]), max(AS[k])]) for k, x in enumerate(ax1[:-1])]
         _ = [x.set_ylim([min(AI[k]), max(AI[k])]) for k, x in enumerate(ax2[:-1])]
@@ -71,6 +70,8 @@ if __name__ == '__main__':
         _ = ax0[1].set_title('Trajectories')
         plt.show()
         fig.subplots_adjust(hspace=.5)
+        # fig.savefig('../Figures/Sensitivity_Trajectories.eps', format='eps')
+
         import numpy.linalg as la
         # A_norms = [np.mean(np.linalg.norm(df['A'])) for df in diff_list]
         A_norms = [la.norm(la.norm(df['A'])) for df in diff_list]
@@ -80,15 +81,16 @@ if __name__ == '__main__':
 
 
 
-        fig3, ax3 = plt.subplots()
-        ax3.scatter(dts, A_norms, marker='x', color='k', label=r'$||||A_{var}-A_{auto}||_F||_F$')
-        ax3.scatter(dts, B_norms, marker='o', color='k', label=r'$||||B_{var}-B_{auto}||_F||_F$')
-        ax3.set_yscale('log')
-        ax3.set_xscale('log')
-        ax3.legend()
-        ax3.grid()
-
-
+        fig4, ax4 = plt.subplots(2)
+        ax4[0].scatter(dts, A_norms, marker='x', color='k', label=r'$||||A_{var}-A_{auto}||_F||_F$')
+        ax4[1].scatter(dts, B_norms, marker='o', color='k', label=r'$||||B_{var}-B_{auto}||_F||_F$')
+        # ax3.set_yscale('log')
+        # ax3.set_xscale('log')
+        ax4[0].legend()
+        ax4[0].grid()
+        ax4[1].legend()
+        ax4[1].grid()
+        ax4[1].set_xlabel('$\Delta t$')
         plt.show()
 
-        fig3.savefig('../Figures/Sensitivity_Comparison.eps', format='eps')
+        fig4.savefig('../Figures/Sensitivity_Comparison.eps', format='eps')

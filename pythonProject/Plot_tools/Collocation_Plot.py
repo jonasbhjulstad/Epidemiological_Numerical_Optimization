@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from Collocation.collocation_coeffs import collocation_polynomials
 import numpy as np
 from matplotlib import cm
 
@@ -67,28 +66,25 @@ class collocation_plot(object):
 
 
 
-        fig, axs = plt.subplots(4)
-        def onclick(event):
-            if(self.iter <self.N_iter):
-                [ax.clear() for ax in axs]
-                theta_plot(self.thetas[self.iter],self.x_plot[self.iter], self.u_plot[self.iter], axs)
-                self.iter += iteration_step
-        if full_plot:
-            iter_steps = np.arange(self.iter, self.N_iter, iteration_step)
-            colormap = cm.get_cmap('Greys', len(iter_steps))
-            colors = colormap(np.linspace(.1, .6, len(iter_steps)))
-            [theta_plot(self.thetas[iter],self.x_plot[iter], self.u_plot[iter], axs, iter, color=colors[i]) for i, iter in enumerate(iter_steps)]
-            theta_plot(self.thetas[-1],self.x_plot[-1], self.u_plot[-1], axs, self.N_iter, color=colors[-1], marker='o', markersize=3)
-            axs[0].set_ylabel('S')
-            axs[1].set_ylabel('I')
-            axs[2].set_ylabel('R')
-            axs[3].set_ylabel('u')
-            axs[0].set_title('Collocation Multiple-Shooting N = %i, ' % self.N + " iterations = %i" % self.N_iter)
-            plt.show()
+def Trajectory_Plot(SimDataName):
+    with open(parent + '/data/' + SimDataName + '.pck', 'rb') as f:
+        SimData = pck.load(f)
 
-        else:
-            fig.canvas.mpl_connect('button_press_event', onclick)
-            plt.show()
-            plt.draw()
-        return fig, axs
-
+    N_iter = len(SimData['U'])
+    colormap = cm.get_cmap('Greys', N_iter)
+    colors = colormap(np.linspace(.3,.9,N_iter))
+    t = SimData['t_M']
+    fig, ax = plt.subplots(4)
+    for Uk, Xk, color in zip(SimData['U'], SimData['X'], colors):
+        ax[0].plot(t, Xk[::3][:-2], color=color)
+        ax[1].plot(t, Xk[1::3][:-2], color=color)
+        ax[2].plot(t, Xk[2::3][:-2], color=color)
+        ax[3].plot(t[::int(len(t)/len(Uk))], Uk, color=color)   
+    _ = [x.grid() for x in ax]
+    ax[0].set_ylabel('S')
+    ax[1].set_ylabel('I')
+    ax[2].set_ylabel('R')
+    ax[3].set_ylabel('u')
+    _ = [x.set_xticklabels('') for x in ax[:-1]]
+    ax[3].set_xlabel('Time [days]')
+    ax[0].set_title('RK4 M = {}, N = {}, Iterations = {}'.format(SimData['M'], len(SimData['U'][0]), N_iter))

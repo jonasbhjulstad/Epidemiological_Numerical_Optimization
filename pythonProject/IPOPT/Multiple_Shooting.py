@@ -8,22 +8,21 @@ from Line_Search.Newton import armaijo_newton, newton_rhapson
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy.linalg as la
-import logging
-from Custom_Logging.Iteration_logging import setup_custom_logger
+import pickle as pck
+from Parameters.ODE_initial import tgrid, tgrid_M, M
 
 
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
-    if param == 'Social Distancing':
-        from Parameters.Parameters_Social_Distancing import f, x0, u_min, u_max, N, fk, nx
+    if param == 'Social_Distancing':
+        from Parameters.Parameters_Social_Distancing import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot
     if param == 'Vaccination':
-        from Parameters.Parameters_Vaccination_Flat import f, x0, u_min, u_max, N, fk, nx
+        from Parameters.Parameters_Vaccination_Flat import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot
     if param == 'Isolation':
-        from Parameters.Parameters_Isolation import f, x0, u_min, u_max, N, fk, nx
+        from Parameters.Parameters_Isolation import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot
     method = 'Primal_Dual_Multiple_Shooting'
-    logger = setup_custom_logger(method + '_' + param)
 
     U = MX.sym('U', N)
     X = MX.sym('X', (nx, N))
@@ -65,11 +64,12 @@ def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
     #Initial Values
 
     tau = 1
-    U0 = [u_max] * N
+    U0 = [0.001] * N
     if traj_initial:
-        X0 = f(x0, [u_max] * N)[0].full().squeeze()[:-nx]
+        X0 = f(x0, U0)[0].full().squeeze()[:-nx]
     else:
         X0 = x0 * N
+
     lbd0 = np.linspace(0, 10, Ng)
     mu0 = [.5] * Nh
     s0 = mu0
@@ -82,38 +82,64 @@ def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
     assert init_rank == jac_Fr0.shape[0], 'Initial rank deficiency: %i' % init_rank + ', should be %i' % jac_Fr0.shape[
         0]
 
-    tol = .5
+    tol = 1e-3
     max_iter = 100
     wk_diff = 1000
+    diff_scaler = [u_max-u_min]*N + [N_pop]*(N)*nx + [1]*(Ng + 2*Nh)
     wk_diff_list = []
-    wk_diff_tol = 10
+    wk_diff_tol = 900
     tau = 1
     tau_tol = 1e-3
-    is_armaijo = True
+    is_armaijo = False
     wk_list = [w0]
-
-    logger.debug('Primal Dual Multiple Shooting Initialized')
-    logger.debug('w0: ')
-    logger.debug(w0)
+    wk_opt_list = [w0]
 
     def root_fun(wk, tau):
         f = lambda w: Fr(w, tau)
         jac_f = lambda w: jac_Fr(w, tau)
         if is_armaijo:
-            return armaijo_newton(f, jac_f, wk, tol=tol, max_iter=max_iter,
-                                  logger=logger)
+            return armaijo_newton(f, jac_f, wk, tol=tol, max_iter=max_iter, verbose=True)
         else:
-            return newton_rhapson(f, jac_f, wk, tol=tol, max_iter=max_iter,
-                                  logger=logger)
-
-    while (wk_diff > wk_diff_tol) or (tau > tau_tol):
+            return newton_rhapson(f, jac_f, wk, tol=tol, max_iter=max_iter, verbose=True)
+    iter = 0
+    wk_diff_norm = 1000
+    while wk_diff_norm > wk_diff_tol or (tau > tau_tol) or (iter > max_iter):
+        print('tau = {}, norm_1(delta_w) = {}'.format(tau, wk_diff_norm))
         wk_old = wk_list[-1]
         wk_list.extend(root_fun(wk, tau))
-        wk_diff = norm_1(wk_old - wk_list[-1])
+        wk_opt_list.append(wk_list[-1])
+        wk_diff = wk_old - wk_list[-1]
         wk_diff_list.append(wk_diff)
+        wk_diff_norm = norm_1(np.divide(wk_diff, diff_scaler))
         tau *= tau_factor
         wk_list.append(wk)
+        iter+=1
+
+    # Format solution data
+    separate_w = Function('sep_w', [w], [U, X, lbd, mu, s])
+    U_list = []
+    X_list = []
+    lbd_list = []
+    mu_list = []
+    s_list = []
+    for w_sol in wk_opt_list:
+        U_opt, X_opt, lbd_opt, mu_opt, s_opt = separate_w(w_sol)
+        _ = [x.append(y.full()) for x, y in zip([U_list, X_list, lbd_list, mu_list, s_list],[U_opt, X_opt, lbd_opt, mu_opt, s_opt])]
+    
+
+
+
+    sim_data = {'U': U_list,'lam_g': lbd_opt, 'lam_x': mu_opt,
+            'X': [X_plot(x0, u) for u in U_list],
+            'Q': [Q_plot(x0, u) for u in U_list],
+            'X_raw': X_list,
+            't_M': tgrid_M, 't': tgrid, 'N': N, 'M': M}
+    fname = parent + '/data/Multiple_Shooting_Primal_Dual_' + param
+    with open(fname + '.pck', 'wb') as file:
+        pck.dump(sim_data, file)
+    
+    return fname
 
 
 if __name__ == '__main__':
-    Primal_Dual_Multiple_Shooting('Vaccination')
+    Primal_Dual_Multiple_Shooting('Social_Distancing', traj_initial=True)

@@ -7,8 +7,7 @@ from ODEs.SIR import SIR
 import pickle as pck
 import pandas as pd
 import matplotlib.pyplot as plt
-
-N_pop = 5.3e6
+from Parameters.ODE_initial import *
 
 
 def Autodiff_SIR(x, R0, alpha, h, Ak, Bk):
@@ -52,13 +51,10 @@ def Autodiff_SIR(x, R0, alpha, h, Ak, Bk):
 def Autodiff_SIR_Sensitivity(dt,start=0 , stop=28,plot=False, save = []):
     T = 28.  # Time horizon
     # Declare model variables
-    I0 = 2000
-    u_min = 0.5
     R0 = 6.5
 
     t = np.arange(start, stop,dt)
     X0 = [N_pop - I0, I0, 0]
-    alpha = 0.2
     u = R0
     A = [np.eye(3)]
     x = [X0]

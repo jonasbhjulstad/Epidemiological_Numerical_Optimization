@@ -3,10 +3,10 @@ from casadi import *
 def collocation_coeffs(d):
     # Use a breakpoint in the code line below to debug your script.
 
-    tau_root = [0] + collocation_points(d, "radau")
-    B = np.zeros(d+1)
+    tau_root = [0] + collocation_points(d, "legendre")
+    B = np.zeros((d+1,1))
     C = np.zeros((d+1, d+1))
-    D = np.zeros(d+1)
+    D = np.zeros((d+1,1))
 
     for j in range(d+1):
 
@@ -24,11 +24,11 @@ def collocation_coeffs(d):
         pint = np.polyint(p)
         B[j] = pint(1.0)
 
-    print("Collocation coefficients: ", C, D, B)
+    # print("Collocation coefficients: ", C, D, B)
     return B, C, D, tau_root
 
-def collocation_polynomials(d):
-    tau_root = [0] + collocation_points(d, "radau")
+def legendre_polynomials(d):
+    tau_root = [0] + collocation_points(d, "legendre")
     p_list = []
     for j in range(d+1):
 

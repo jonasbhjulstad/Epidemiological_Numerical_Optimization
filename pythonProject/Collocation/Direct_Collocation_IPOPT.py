@@ -4,35 +4,50 @@ import sys
 from os.path import dirname, abspath
 parent = dirname(dirname(abspath(__file__)))
 sys.path.append(parent)
-# from ODEs.SIR import SIR
 import numpy as np
 import matplotlib.pyplot as plt
-from Collocation.collocation_coeffs import collocation_coeffs, collocation_polynomials
-from Callbacks.CasADI_Collocation_Callback import DataCallback
+from Collocation.collocation_coeffs import collocation_coeffs
 from Plot_tools.Collocation_Plot import collocation_plot
-import pandas as pd
 import pickle as pck
-import xarray as xr
 # Press the green button in the gutter to run the script.
+from Parameters.ODE_initial import T, h
+from RK4.Integrator import RK4_Integrator
+from Callbacks.Singleshoot import Iteration_Callback
+
+def Initial_Trajectory(F, N, d, x0, U, h, tau_root):
+    tau_size = np.diff(tau_root)
+    x0 = np.reshape(x0, (-1,1))
+    Xkj = x0
+    Xdot_list = []
+    X0 = [x0]
+    for k in range(N):
+        Xdot_list = []
+        for j in range(d):
+            Xkj = RK4_Integrator(F, Xkj, U[k], h*tau_size[j])
+            if j != d-1:
+                Xdot_list.append(F(Xkj, U[k])[0].full())
+            else:
+                
+                X0.append(Xkj)
+                Xdot_list.append(F(Xkj, U[k])[0].full())
+            
+
+        X0.append(np.concatenate(Xdot_list, axis=1))
+    return np.concatenate(X0, axis=1).reshape(-1)
 
 
 
-
-def SIR(X, R0):
-    beta = R0*alpha
-    return vertcat(-beta * X[0, :] * X[1, :]/N_pop, beta * X[0, :] * X[1, :]/N_pop - alpha * X[1, :], alpha * X[1, :])
-
-def DirectCollocationMain(param, do_solve=True, save=True):
+def Direct_Collocation(param, method='IPOPT'):
 
 
-    if param == 'Social Distancing':
-        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
-    elif param == 'Isolation':
-        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
+    if param == 'Social_Distancing':
+        from Parameters.Parameters_Social_Distancing import x0, u_min, u_max, u0, fk, F, X_plot, Q_plot, N, M, nx, N_pop, tgrid_M, tgrid
     elif param == 'Vaccination':
-        from Parameters.Parameters_Social_Distancing import X, U, u_min, u_max, Wu, beta, xdot, x0, L, M, DT, h, f, X0, X_plot, u_lb, u_ub, u_init, u0, sim_name, Q, N, T, N_pop
-
-    plt.close()
+        from Parameters.Parameters_Vaccination_Flat import x0, u_min, u_max, u0, fk, F, X_plot, Q_plot, N, M, nx, N_pop, tgrid_M, tgrid
+    elif param == 'Isolation':
+        from Parameters.Parameters_Isolation import x0, u_min, u_max, u0, fk, F, X_plot, Q_plot, N, nx, M, N_pop, tgrid_M, tgrid
+    else:
+        return
 
     d = 3
     B, C, D, tau_root = collocation_coeffs(d)
@@ -40,210 +55,106 @@ def DirectCollocationMain(param, do_solve=True, save=True):
     # Get collocation points
     tau_root = np.append(0, collocation_points(d, 'legendre'))
 
-    # Coefficients of the collocation equation
-    C = np.zeros((d + 1, d + 1))
-
-    # Coefficients of the continuity equation
-    D = np.zeros(d + 1)
-
-    # Coefficients of the quadrature function
-    B = np.zeros(d + 1)
-
-    # Construct polynomial basis
-    for j in range(d + 1):
-        # Construct Lagrange polynomials to get the polynomial basis at the collocation point
-        p = np.poly1d([1])
-        for r in range(d + 1):
-            if r != j:
-                p *= np.poly1d([1, -tau_root[r]]) / (tau_root[j] - tau_root[r])
-
-        # Evaluate the polynomial at the final time to get the coefficients of the continuity equation
-        D[j] = p(1.0)
-
-        # Evaluate the time derivative of the polynomial at all collocation points to get the coefficients of the continuity equation
-        pder = np.polyder(p)
-        for r in range(d + 1):
-            C[j, r] = pder(tau_root[r])
-
-        # Evaluate the integral of the polynomial to get the coefficients of the quadrature function
-        pint = np.polyint(p)
-        B[j] = pint(1.0)
-
-    solve='casADI'
-    data_path = r'../data/'
-    # Time horizon
-    nx = 3
-    nu = 1
-    tf = T
-
-
-
-    # Start with an empty NLP
-    w = []
-    w0 = []
-    lbw = []
-    ubw = []
     J = 0
-    g = []
-    lbg = []
-    ubg = []
-    use_g_bounds = False
-    xg_min = [0,0,0]
-    xg_max = [N_pop, N_pop, N_pop]
-    if use_g_bounds:
-        x_min = [-inf] * 3
-        x_max = [inf] * 3
-    else:
-        x_min = [0,0,0]
-        x_max = [N_pop, N_pop, N_pop]
 
+    u0 = u_min
 
-    u0 = u_max
-    # For plotting x and u given w
-    x_plot = []
-    u_plot = []
+    U = MX.sym('U', N)
 
-    # "Lift" initial conditions
-    Xk = MX.sym('X0', 3)
-    w.append(Xk)
-    lbw.append(x0)
-    ubw.append(x0)
-    w0.append(x0)
-    x_plot.append(Xk)
-    x_thetas = [Xk]
+    #Control timepoints for states + endstate:
+    Xu = [MX.sym('Xu_' + str(i), (nx,1)) for i in range(N+1)]
+    #Thetas excluding control timepoint states:
+    Xth = [MX.sym('Xth_' + str(i), (nx,d)) for i in range(N)] 
 
-
+    #Compute xdot, Qk for all thetas:
+    Fth = F.map(d+1, 'serial')
+    gth = []
+    gu = [x0-Xu[0]]
     # Formulate the NLP
     for k in range(N):
-        # New NLP variable for the control
-        Uk = MX.sym('U_' + str(k))
-        w.append(Uk)
-        lbw.append([u_min])
-        ubw.append([u_max])
-        w0.append([u0])
-        u_plot.append(Uk)
-        x_thetas.append(Xk)
-
-        # State at collocation points
-        Xc = []
-        for j in range(d):
-            Xkj = MX.sym('X_' + str(k) + '_' + str(j), 3)
-            Xc.append(Xkj)
-            w.append(Xkj)
-            x_thetas.append(Xkj)
-
-            lbw.append(x_min)
-            ubw.append(x_max)
-            if use_g_bounds:
-                g.append(Xkj)
-                lbg.append(xg_min)
-                ubg.append(xg_max)
-            w0.append(x0)
-
+        #All states in current iteration
+        Xk = horzcat(*[Xu[k], Xth[k]])
         # Loop over collocation points
-        Xk_end = D[0] * Xk
-        for j in range(1, d + 1):
-            # Expression for the state derivative at the collocation point
-            xp = C[0, j] * Xk
-            for r in range(d): xp = xp + C[r + 1, j] * Xc[r]
+        Xk_end = D[0] * Xu[k]
 
-            # Append collocation equations
-            fj, qj = f(Xc[j - 1], Uk)
-            g.append(h * fj - xp)
-            lbg.append([0, 0, 0])
-            ubg.append([0, 0, 0])
-
-            # Add contribution to the end state
-            Xk_end = Xk_end + D[j] * Xc[j - 1];
-
-            # Add contribution to quadrature function
-            J = J + B[j] * qj * h
-
-        # New NLP variable for state at end of interval
-        Xk = MX.sym('X_' + str(k + 1), 3)
-        w.append(Xk)
-        lbw.append(x_min)
-        ubw.append(x_max)
-        if use_g_bounds:
-            g.append(Xk)
-            lbg.append(xg_min)
-            ubg.append(xg_max)
-        w0.append(x0)
-        x_plot.append(Xk)
+        # Expression for the state derivative at the collocation point
+        Xp = C.T @ Xk.T
+        Xk_end = D.T @ Xk.T
+        # Append collocation equations
+        Xth_next, Qk = Fth(Xk, U[k])
+        gth.append((h * Xth_next[:,:-1].T - Xp[:-1,:]).reshape((-1,1)))
+        # Add contribution to quadrature function
+        J = J + B.T @ Qk.T * h
 
         # Add equality constraint
-        g.append(Xk_end - Xk)
-        lbg.append([0, 0, 0])
-        ubg.append([0, 0, 0])
+        gu.append((Xk_end.T - Xu[k]).reshape((-1,1)))
 
-    # Concatenate vectors
-    w = vertcat(*w)
-    x_thetas = vertcat(*x_thetas)
-    g = vertcat(*g)
-    x_plot = horzcat(*x_plot)
-    u_plot = horzcat(*u_plot)
-    w0 = np.concatenate(w0)
-    lbw = np.concatenate(lbw)
-    ubw = np.concatenate(ubw)
-    lbg = np.concatenate(lbg)
-    ubg = np.concatenate(ubg)
+
+    g = vertcat(*[vertcat(*gth), vertcat(*gu)])
+    X = [horzcat(u, th) for u, th in zip(Xu, Xth)]
+    X.append(Xu[-1])
+    X = horzcat(*X)
+
+    NX = X[:].shape[0]
+    V = vertcat(*[U, X.reshape((-1,1))])
 
     Ng = g.shape[0]
-    NW = w.shape[0]
-    v_opt = []
-
-    if do_solve:
-        # Create an NLP solver
-        NU = N
-        trajectories = Function('trajectories', [w], [x_plot, u_plot, x_thetas.reshape((3, -1))], ['w'],
-                                ['x', 'u', 'thetas'])
-
-        param = {'nx': NW, 'nu': nu, 'ng': Ng, 'd': d, 'tgrid': np.linspace(0, tf, N+1)}
-        CB = DataCallback('CB', param)
-
-        opts = {}
-        opts['iteration_callback'] = CB
-        opts['ipopt.max_iter'] = 10000
-        opts['ipopt.output_file'] = '../data/log.opt'
-
-        prob = {'f': J, 'x': w, 'g': g}
-        solver = nlpsol('solver', 'ipopt', prob, opts);
-
-        # Solve the NLP
-        sol = solver(x0=w0, lbx=lbw, ubx=ubw, lbg=lbg, ubg=ubg)
-        v_opt = sol['x']
+    Nv = V.shape[0]
 
 
-    # Function to get x and u trajectories from w
+    #Construct Initial Trajectory
+    traj_initial=True
+    if traj_initial:
+        X0 = Initial_Trajectory(F, N, d, x0, [u_min]*N, h, tau_root)
+        # X0 = f(x0, u0)[0].full().squeeze()[:-nx]
+    trajinit= '_initial'
 
-    trajectories = Function('trajectories', [w], [x_plot, u_plot, x_thetas.reshape((3, -1))[:, :-1]], ['w'],
-                                ['x', 'u', 'thetas'])
+    V0 = np.concatenate([[u0]*N, X0])
+    lbg = ubg = [0]*Ng
+    lbv = [u_min]*N + [0]*NX
+    ubv = [u_max]*N + [N_pop]*NX
 
-    x_opt, u_opt, thetas_opt = trajectories(v_opt)
-    tgrid = np.linspace(0,tf,N)
-    tgrid_radau = np.concatenate([tau_root + tk for tk in tgrid])
+    CB = Iteration_Callback('Singleshoot_CB', V.shape[0], Ng, 1)
+    opts = {}
+    opts['iteration_callback'] = CB
+    opts['ipopt.max_iter'] = 10000
 
-    if do_solve:
-        x_plot, u_plot, thetas = CB.iter_sol_to_arrays(trajectories)
-        x_plot.to_netcdf('../data/x_plot.nc')
-        u_plot.to_netcdf('../data/u_plot.nc')
-        thetas.to_netcdf('../data/thetas.nc')
-
-    else:
-        x_plot = xr.open_dataarray('../data/x_plot.nc')
-        u_plot = xr.open_dataarray('../data/u_plot.nc')
-        thetas = xr.open_dataarray('../data/thetas.nc')
+    prob = {'f': J, 'x': V, 'g': g}
+    solver = nlpsol('solver', 'ipopt', prob, opts);
 
 
-    CP = collocation_plot(x_plot, u_plot, thetas, tgrid)
+    # Solve the NLP
+    sol = solver(x0=V0, lbx=lbv, ubx=ubv, lbg=lbg, ubg=ubg)
 
-    fig, axs = CP.iteration_plot(5, full_plot=True)
-    save = True
-    if save:
-        fig.savefig('../Figures/Trajectories/Collocation_Trajectory_' + sim_name + '.eps', format='eps')
 
-    # CP.solution_plot(x_opt, u_opt)
+    separate_v = Function('sep_v', [V], [horzcat(*Xu), U, X])
+    # separate_g = Function('sep_g', [g], [vertcat(*gth), vertcat(*gu)])
+
+    X_sols = []
+    U_sols = []
+    Theta_sols = []
+    lam_g_sols = []
+    lam_x_sols = []
+    for V_sol, lam_x_sol, lam_g_sol in zip(CB.x_sols, CB.lam_x_sols, CB.lam_g_sols):
+        X_sol, U_sol, Theta_sol = separate_v(V_sol)
+        X_sols.append(X_sol)
+        U_sols.append(U_sol)
+        Theta_sols.append(Theta_sol)
+        lam_x_sols.append(separate_v(lam_x_sol))
+        # lam_g_sols.append(separate_g(lam_g_sol)) 
+    
+
+    a = CB.x_sols[0]
+    sim_data = {'U': U_sols, 'lam_x': lam_g_sols, 'lam_g': lam_x_sols,
+                'X': X_sols,
+                't': tgrid, 'N': N, 'f': CB.f_sols[-1]}
+    fname = 'Collocation_' + method + '_' + param + trajinit
+    with open(parent + '/data/' + fname + '.pck', 'wb') as file:
+        pck.dump(sim_data, file)
+    
+    return fname
+    
 
 
 if __name__ == '__main__':
-    DirectCollocationMain('Isolation')
+    Direct_Collocation('Social_Distancing')

@@ -6,8 +6,6 @@ parent = dirname(dirname(abspath(__file__)))
 sys.path.append(parent)
 from Parameters.ODE_initial import *
 from RK4.Integrator import RK4_M_times_plot, integrator_N_times_plot
-
-
 S = MX.sym('S')
 I = MX.sym('I')
 R = MX.sym('R')
@@ -15,16 +13,11 @@ x = vertcat(S, I, R)
 u = MX.sym('u')
 u_min = 1e-6
 u_max = .3
-lbd = MX.sym('lbd', 3)
+beta = u*alpha
 # Model equations
 Wu = N_pop
 L = I + Wu * u
 xdot = vertcat(-beta * S * I / N_pop - u*S, beta * S * I / N_pop - alpha * I, alpha * I + u*S)
-hamiltonian = L + lbd.T @ xdot
-grad_h = jacobian(hamiltonian, x).T
-s_dot = Function('s_dot', [vertcat(x, lbd), u], [vertcat(xdot, -grad_h)])
-grad_h_u = Function('grad_h_u', [u, vertcat(x, lbd)], [jacobian(hamiltonian, u)])
-
 x0 = [N_pop - I0, I0, 0]
 nx = len(x0)
 # Formulate discrete time dynamics

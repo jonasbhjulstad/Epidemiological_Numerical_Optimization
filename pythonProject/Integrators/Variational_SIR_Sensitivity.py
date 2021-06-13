@@ -7,7 +7,7 @@ from ODEs.SIR import SIR
 import matplotlib.pyplot as plt
 import pickle as pck
 import pandas as pd
-N_pop = 5.3e6
+from Parameters.ODE_initial import *
 def dF_dx(x, u, alpha):
     return np.array([[-u * alpha *x[1]/N_pop, -u * alpha* x[0]/N_pop, 0],
                      [u * alpha *x[1]/N_pop, u * alpha* x[0]/N_pop - alpha, 0],
@@ -51,12 +51,7 @@ def RK4(F, F_A, F_B, x, h, A, B):
 
 def Variational_SIR_Sensitivity(dt,start=0 , stop=28,plot=False, save = False):
 
-    T = 28.  # Time horizon
     # Declare model variables
-    I0 = 2000
-    u_min = 0.5
-    alpha = 0.2
-
     R0 = 6.5
     u = R0
     t = np.arange(start, stop,dt)

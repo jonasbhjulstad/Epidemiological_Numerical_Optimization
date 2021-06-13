@@ -20,7 +20,7 @@ if __name__ == '__main__':
     _ = [x.plot(tgrid, j, color='k') for x, j in zip(ax, np.array(X).T)]
     _ = [x.grid() for x in ax]
 
-    ax[0].set_title('RK4-Integration N = %i' %N_iter + ', $\mathscr{R}_0 = %.1f$' %R0 + ', $I_0$ = %i' %x0[1])
+    ax[0].set_title('$N_{pop} = $%i' % N_pop + '$\mathscr{R}_0 = %.1f$' %R0 + ', $I_0$ = %i' %x0[1])
     ax[-1].set_xlabel('time [days]')
     _ = [x.set_xticklabels('') for x in ax[:-1]]
     _ = [x.set_ylabel(s) for x, s in zip(ax, ['S', 'I', 'R'])]

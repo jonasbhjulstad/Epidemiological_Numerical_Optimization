@@ -23,7 +23,7 @@ grad_h_u = Function('grad_h_u', [u, vertcat(x, lbd)], [jacobian(hamiltonian, u)]
 s_dot = Function('s_dot', [vertcat(x, lbd), u], [vertcat(xdot, -grad_h)])
 x0 = [N_pop - I0, I0, 0]
 # Objective term
-Wu = 1
+Wu = .1
 L = I + Wu * (u - u_max)**2/(u_max-u_min)**2
 
 # Formulate discrete time dynamics

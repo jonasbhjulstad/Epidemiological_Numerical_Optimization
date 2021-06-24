@@ -15,7 +15,7 @@ u_min = .5
 u_max = 6.5
 beta = u*alpha
 # Model equations
-Wu = 1e-4
+Wu = 0.1
 L = I/N_pop + Wu * (u - u_max)**2/(u_max-u_min)**2
 xdot = vertcat(-beta * S * I / N_pop, beta * S * I / N_pop - alpha * I, alpha * I)
 
@@ -23,7 +23,7 @@ x0 = [N_pop - I0, I0, 0]
 nx = len(x0)
 # Formulate discrete time dynamics
 # Fixed step Runge-Kutta 4 integrator
-u0 = (u_max-u_min)/2
+u0 = u_max
 sim_name = 'Social_Distancing'
 
 #Functions for computing states and derivatives + plot values

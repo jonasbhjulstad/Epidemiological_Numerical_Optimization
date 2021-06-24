@@ -9,3 +9,5 @@ opts_SQP = {}
 opts_SQP["calc_f"] = True
 opts_SQP["calc_g"] = True
 opts_SQP["iteration_callback_step"] = iter_step
+opts_SQP["qpsol_options"] = {}
+# opts_SQP["qpsol_options"]["printLevel"] = "3" 

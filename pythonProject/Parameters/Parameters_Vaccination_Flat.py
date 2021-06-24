@@ -11,13 +11,15 @@ I = MX.sym('I')
 R = MX.sym('R')
 x = vertcat(S, I, R)
 u = MX.sym('u')
-u_min = 1e-6
-u_max = .3
-beta = u*alpha
+u_min = 1e-8*N_pop
+u_max = 0.02*N_pop
+
+# beta = R0*alpha
+beta = R0*alpha
 # Model equations
-Wu = N_pop
-L = I + Wu * u
-xdot = vertcat(-beta * S * I / N_pop - u*S, beta * S * I / N_pop - alpha * I, alpha * I + u*S)
+Wu = 1
+L = I/N_pop + Wu * u/N_pop
+xdot = vertcat(-beta * S * I / N_pop - u, beta * S * I / N_pop - alpha * I, alpha * I + u)
 x0 = [N_pop - I0, I0, 0]
 nx = len(x0)
 # Formulate discrete time dynamics

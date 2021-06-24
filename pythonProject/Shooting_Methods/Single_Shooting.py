@@ -35,6 +35,7 @@ def Single_Shooting_RK4(param, method='IPOPT'):
         opts_IPOPT['iteration_callback'] = CB
         solver = nlpsol('solver', 'ipopt', prob, opts_IPOPT)
     elif method == 'SQP':
+
         opts_SQP['iteration_callback'] = CB
         solver = nlpsol('solver', 'sqpmethod', prob, opts_SQP)
 
@@ -51,5 +52,8 @@ def Single_Shooting_RK4(param, method='IPOPT'):
         pck.dump(sim_data, file)
     return fname
 
+
+
 if __name__ == '__main__':
-    Single_Shooting_RK4('Social_Distancing')
+
+    Single_Shooting_RK4('Isolation', method='SQP')

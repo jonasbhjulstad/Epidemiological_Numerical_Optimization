@@ -18,6 +18,8 @@ def Multiple_shooting_PMP(param, is_armaijo=False):
 
     if param == 'Social_Distancing':
         from Parameters.Parameters_Social_Distancing import u_min, u_max, L, xdot, x, nx, u, M, h, N, x0, u0, f
+        if u_max > 2.0:
+            u_max = 2.0
     elif param == 'Vaccination':
         from Parameters.Parameters_Vaccination_Flat import u_min, u_max, L, xdot, x, nx, u, M, h, N, x0, u0, f
     elif param == 'Isolation':
@@ -104,7 +106,6 @@ def Multiple_shooting_PMP(param, is_armaijo=False):
         # print(U)
         # Solve newton-iteration:
         Sk_old = Sk
-        plt.show()
         S_sol = (newton_rhapson(lambda s: Fr(s, U), lambda s: jac_Fr(s, U), Sk, tol=1e-6))
         Sk = S_sol[-1]
         # Sk_diff_norm = norm_1(np.divide(Sk-Sk_old, diff_scaler))

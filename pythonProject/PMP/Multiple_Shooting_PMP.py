@@ -10,7 +10,7 @@ parent = dirname(dirname(abspath(__file__)))
 sys.path.append(parent)
 from RK4.Integrator import RK4_M_times_plot, integrator_N_times_plot
 from Line_Search.Newton import armaijo_newton, newton_rhapson
-from Parameters.ODE_initial import N_pop, N, M, tgrid, tgrid_M
+from Parameters.ODE_initial import *
 import pickle as pck
 
 
@@ -62,11 +62,10 @@ def Multiple_shooting_PMP(param, is_armaijo=False):
 
     # Initial Conditions
 
-    lbd0 = [1e-10, 1e-12, 1e-11]
+    lbd0 = [1,1,1]
     traj_initial = True
     S0 = [x0, lbd0]
     X0 = f(x0, u0)[0].full().squeeze()[:-nx]
-    diff_scaler = [N_pop, N_pop, N_pop, 1, 1, 1]*(N+1)
     for i in range(N):
         if traj_initial:
             S0.append(X0[i:i+nx])
@@ -76,7 +75,6 @@ def Multiple_shooting_PMP(param, is_armaijo=False):
     S0 = np.concatenate(S0)
     trajinit= '_initial'
     Sk = S0
-    diff_tol = 1e-6
     Sk_diff_norm = diff_tol+1
 
     max_iter = 100
@@ -95,14 +93,13 @@ def Multiple_shooting_PMP(param, is_armaijo=False):
         # Calculate optimal U:
         U = []
         for i in range(N):
-            sk = Sk[i:i+2*nx]
+            sk = Sk[2*nx*i:2*nx*i+2*nx]
             U.append(argmin_u(u0, sk))
 
 
         # print(U)
         # Solve newton-iteration:
         Sk_old = Sk
-        plt.show()
         S_sol = (newton_rhapson(lambda s: Fr(s, U), lambda s: jac_Fr(s, U), Sk, tol=1e-6))
         Sk = S_sol[-1]
         # Sk_diff_norm = norm_1(np.divide(Sk-Sk_old, diff_scaler))
@@ -111,18 +108,21 @@ def Multiple_shooting_PMP(param, is_armaijo=False):
         S_sols.extend(S_sol)
 
 
+    X_sols = [np.reshape(X0, (nx,-1))]
+    X_sols_raw = [np.reshape(X0, (nx,-1))]
+    U_sols = [np.array([u0]*N)]
+    lbd_sols_raw = [np.array([lbd0]*(N+1))]
 
-
-    X_sols_raw = [s.reshape((2*nx,-1))[:nx, :] for s in S_sols]
-    lbd_sols_raw = [s.reshape((2*nx,-1))[nx:, :] for s in S_sols]
+    X_sols_raw.append([s.reshape((2*nx,-1))[:nx, :] for s in S_sols])
+    lbd_sols_raw.append([s.reshape((2*nx, -1))[nx:, :].full() for s in S_sols])
     S_sols_reconstructed = [S_plot(s[:2*nx], u) for s, u in zip(S_sols, U_sols)]
-    X_sols = [s.reshape((2*nx, -1))[:nx,:-nx] for s in S_sols_reconstructed]
-    lbd_sols = [s.reshape((2*nx, -1))[nx:,:-nx] for s in S_sols_reconstructed]
+    X_sols.append([s.reshape((2*nx, -1))[:nx,:-nx] for s in S_sols_reconstructed])
+    lbd_sols = [s.reshape((2*nx, -1))[nx:,:-nx].full() for s in S_sols_reconstructed]
 
     Q_sols = [Q_plot(s_sol[:2*nx], u) for s_sol, u in zip(S_sols, U_sols)]
 
     a = 1
-    sim_data = {'U': U_sols, 'lam_x': lbd_sols_raw,
+    sim_data = {'U': U_sols, 'lam_g': lbd_sols_raw, 'lam_x': lbd_sols_raw,
                 'X': X_sols,
                 'Q': Q_sols,
                 'X_raw': X_sols_raw,

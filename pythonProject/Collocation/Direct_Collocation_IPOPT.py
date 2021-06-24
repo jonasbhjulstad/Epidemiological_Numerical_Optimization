@@ -1,4 +1,4 @@
-''
+
 from casadi import *
 import sys
 from os.path import dirname, abspath
@@ -7,7 +7,6 @@ sys.path.append(parent)
 import numpy as np
 import matplotlib.pyplot as plt
 from Collocation.collocation_coeffs import collocation_coeffs
-from Plot_tools.Collocation_Plot import collocation_plot
 import pickle as pck
 # Press the green button in the gutter to run the script.
 from Parameters.ODE_initial import T, h
@@ -33,8 +32,7 @@ def Initial_Trajectory(F, N, d, x0, U, h, tau_root):
             
 
         X0.append(np.concatenate(Xdot_list, axis=1))
-    return np.concatenate(X0, axis=1).reshape(-1)
-
+    return np.concatenate(X0, axis=1).reshape((-1))
 
 
 def Direct_Collocation(param, method='IPOPT'):
@@ -80,38 +78,42 @@ def Direct_Collocation(param, method='IPOPT'):
         # Expression for the state derivative at the collocation point
         Xp = C.T @ Xk.T
         Xk_end = D.T @ Xk.T
+
         # Append collocation equations
-        Xth_next, Qk = Fth(Xk, U[k])
-        gth.append((h * Xth_next[:,:-1].T - Xp[:-1,:]).reshape((-1,1)))
-        # Add contribution to quadrature function
-        J = J + B.T @ Qk.T * h
+        Xth_next = vertcat(*[F(Xk[:,i], U[k])[0] for i in range(Xk.shape[1])])
+        # Xth_next, _ = Fth(Xk, horzcat(*([U[k]]*N)))
+        gth.append((h * Xth_next[nx:] - Xp[nx:]))
+        # Add contribution to quadrature function        J = J + B.T @ Qk.T * h
 
         # Add equality constraint
         gu.append((Xk_end.T - Xu[k]).reshape((-1,1)))
 
 
     g = vertcat(*[vertcat(*gth), vertcat(*gu)])
-    X = [horzcat(u, th) for u, th in zip(Xu, Xth)]
-    X.append(Xu[-1])
+    X = [Xu[0]]
+    X.extend([horzcat(u, th) for u, th in zip(Xu[1:], Xth)])   
+
     X = horzcat(*X)
 
     NX = X[:].shape[0]
     V = vertcat(*[U, X.reshape((-1,1))])
 
     Ng = g.shape[0]
-    Nv = V.shape[0]
 
 
     #Construct Initial Trajectory
     traj_initial=True
     if traj_initial:
-        X0 = Initial_Trajectory(F, N, d, x0, [u_min]*N, h, tau_root)
+        X0 = Initial_Trajectory(F, N, d, x0, [u0]*N, h, tau_root)
         # X0 = f(x0, u0)[0].full().squeeze()[:-nx]
-    trajinit= '_initial'
+        trajinit= '_initial'
+    else:
+        X0 = [x0]*(N*(d+1) + 1)
 
-    V0 = np.concatenate([[u0]*N, X0])
+    V0 = np.concatenate([[u0]*N, X0], axis=0)
+
     lbg = ubg = [0]*Ng
-    lbv = [u_min]*N + [0]*NX
+    lbv = [u_min]*N + [-N_pop]*NX
     ubv = [u_max]*N + [N_pop]*NX
 
     CB = Iteration_Callback('Singleshoot_CB', V.shape[0], Ng, 1)
@@ -137,9 +139,9 @@ def Direct_Collocation(param, method='IPOPT'):
     lam_x_sols = []
     for V_sol, lam_x_sol, lam_g_sol in zip(CB.x_sols, CB.lam_x_sols, CB.lam_g_sols):
         X_sol, U_sol, Theta_sol = separate_v(V_sol)
-        X_sols.append(X_sol)
-        U_sols.append(U_sol)
-        Theta_sols.append(Theta_sol)
+        X_sols.append(X_sol.full().T)
+        U_sols.append(U_sol.full())
+        Theta_sols.append(Theta_sol.full())
         lam_x_sols.append(separate_v(lam_x_sol))
         # lam_g_sols.append(separate_g(lam_g_sol)) 
     
@@ -157,4 +159,4 @@ def Direct_Collocation(param, method='IPOPT'):
 
 
 if __name__ == '__main__':
-    Direct_Collocation('Social_Distancing')
+    Direct_Collocation('Isolation')

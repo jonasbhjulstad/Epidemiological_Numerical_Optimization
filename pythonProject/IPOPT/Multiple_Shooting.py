@@ -9,19 +9,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy.linalg as la
 import pickle as pck
-from Parameters.ODE_initial import tgrid, tgrid_M, M
+from Parameters.ODE_initial import *
 
 
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
+def Primal_Dual_Multiple_Shooting(param, traj_initial=True):
     if param == 'Social_Distancing':
-        from Parameters.Parameters_Social_Distancing import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot
+        from Parameters.Parameters_Social_Distancing import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot, u0
     if param == 'Vaccination':
-        from Parameters.Parameters_Vaccination_Flat import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot
+        from Parameters.Parameters_Vaccination_Flat import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot, u0
     if param == 'Isolation':
-        from Parameters.Parameters_Isolation import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot
+        from Parameters.Parameters_Isolation import N_pop,f, x0, u_min, u_max, N, fk, nx, Q_plot, X_plot, u0
     method = 'Primal_Dual_Multiple_Shooting'
 
     U = MX.sym('U', N)
@@ -64,15 +64,17 @@ def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
     #Initial Values
 
     tau = 1
-    U0 = [0.001] * N
+    trajinit = ''
+    U0 = [u0] * N
     if traj_initial:
         X0 = f(x0, U0)[0].full().squeeze()[:-nx]
+        trajinit='_initial'
     else:
         X0 = x0 * N
 
-    lbd0 = np.linspace(0, 10, Ng)
-    mu0 = [.5] * Nh
-    s0 = mu0
+    lbd0 = [1]* Ng
+    mu0 = [1]*Nh
+    s0 = [tau/m for m in mu0]
     w0 = np.concatenate([U0, X0, lbd0, mu0, s0]).T
 
     wk = w0
@@ -87,9 +89,6 @@ def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
     wk_diff = 1000
     diff_scaler = [u_max-u_min]*N + [N_pop]*(N)*nx + [1]*(Ng + 2*Nh)
     wk_diff_list = []
-    wk_diff_tol = 900
-    tau = 1
-    tau_tol = 1e-3
     is_armaijo = False
     wk_list = [w0]
     wk_opt_list = [w0]
@@ -103,12 +102,12 @@ def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
             return newton_rhapson(f, jac_f, wk, tol=tol, max_iter=max_iter, verbose=True)
     iter = 0
     wk_diff_norm = 1000
-    while wk_diff_norm > wk_diff_tol or (tau > tau_tol) or (iter > max_iter):
+    while wk_diff_norm > diff_tol or (tau > tau_tol) or (iter > max_iter):
         print('tau = {}, norm_1(delta_w) = {}'.format(tau, wk_diff_norm))
-        wk_old = wk_list[-1]
-        wk_list.extend(root_fun(wk, tau))
+        wk_old = wk_opt_list[-1]
+        wk_list.extend(root_fun(wk_old, tau))
         wk_opt_list.append(wk_list[-1])
-        wk_diff = wk_old - wk_list[-1]
+        wk_diff = wk_old - wk_opt_list[-1]
         wk_diff_list.append(wk_diff)
         wk_diff_norm = norm_1(np.divide(wk_diff, diff_scaler))
         tau *= tau_factor
@@ -129,17 +128,20 @@ def Primal_Dual_Multiple_Shooting(param, tau_factor=.6, traj_initial=True):
 
 
 
-    sim_data = {'U': U_list,'lam_g': lbd_opt, 'lam_x': mu_opt,
+    sim_data = {'U': U_list,'lam_g': lbd_list, 'lam_x': mu_list,
             'X': [X_plot(x0, u) for u in U_list],
             'Q': [Q_plot(x0, u) for u in U_list],
+            'f_sols': [sum(Q_plot(x0,u).full()) for u in U_list],
+            'f': sum(Q_plot(x0, U_list[-1]).full()),
             'X_raw': X_list,
             't_M': tgrid_M, 't': tgrid, 'N': N, 'M': M}
-    fname = parent + '/data/Multiple_Shooting_Primal_Dual_' + param
-    with open(fname + '.pck', 'wb') as file:
+    
+    fname = 'Multiple_Shooting_Primal_Dual_' + param + trajinit
+    with open(parent + '/data/'  + fname + '.pck', 'wb') as file:
         pck.dump(sim_data, file)
     
     return fname
 
 
 if __name__ == '__main__':
-    Primal_Dual_Multiple_Shooting('Social_Distancing', traj_initial=True)
+    Primal_Dual_Multiple_Shooting('Vaccination', traj_initial=True)

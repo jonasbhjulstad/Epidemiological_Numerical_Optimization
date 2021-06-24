@@ -64,7 +64,7 @@ def Multiple_Shooting_RK4(param, method='IPOPT', traj_initial=True):
     sim_data = {'U': U_sols, 'lam_x': CB.lam_x_sols, 'lam_g': CB.lam_g_sols,
                 'X': [X_plot(x0, u) for u in U_sols],
                 'Q': [Q_plot(x0, u) for u in U_sols],
-                'X_raw': [V_sol[N:] for V_sol in CB.x_sols],
+                'X_raw': [np.vstack([V_sol[N:][::nx],V_sol[N+1:][::nx],V_sol[N+2:][::nx]]) for V_sol in CB.x_sols],
                 't_M': tgrid_M, 't': tgrid, 'N': N, 'M': M, 'f': sol['f'], 'f_sols': CB.f_sols}
     
     fname = 'Multiple_Shooting_' + method + '_' + param + trajinit
@@ -76,4 +76,4 @@ def Multiple_Shooting_RK4(param, method='IPOPT', traj_initial=True):
 
 
 if __name__ == '__main__':
-    Multiple_Shooting_RK4('Social_Distancing', method='IPOPT', traj_initial=True)
+    Multiple_Shooting_RK4('Social_Distancing', method='SQP', traj_initial=True)

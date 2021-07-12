@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dc3ce079-40bc-4825-9f51-d70c4e61eb79" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Latex/Example.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Latex/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Parameters/solver_options.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plot_tools/Iteration_plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pythonProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pythonProject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Callbacks/Singleshoot.py" beforeDir="false" afterPath="$PROJECT_DIR$/Callbacks/Singleshoot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Collocation/Direct_Collocation_IPOPT.py" beforeDir="false" afterPath="$PROJECT_DIR$/Collocation/Direct_Collocation_IPOPT.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Collocation/Direct_Collocation_IPOPT_Symbolic.py" beforeDir="false" afterPath="$PROJECT_DIR$/Collocation/Direct_Collocation_IPOPT_Symbolic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Collocation/log.opt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_IPOPT.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial_Isolation.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_IPOPT_traj_initial_Vaccination.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_SQP.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_SQP_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_SQP_traj_initial.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_Trajectory_SQP_traj_initial_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_IPOPT.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_IPOPT_traj_initial.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_IPOPT_traj_initial_Isolation.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_IPOPT_traj_initial_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_IPOPT_traj_initial_Vaccination.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_SQP.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_SQP_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_SQP_traj_initial.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_bounds_SQP_traj_initial_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_IPOPT.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_Isolation.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_IPOPT_traj_initial_Vaccination.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_SQP.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_SQP_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_SQP_traj_initial.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Multiple_Shooting_obj_con_SQP_traj_initial_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Sensitivity_Comparison.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_Trajectories_IPOPT_Isolation.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_Trajectories_IPOPT_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_Trajectories_IPOPT_Vaccination.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_Trajectory_IPOPT.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_obj_con_IPOPT.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_obj_con_IPOPT_Isolation.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_obj_con_IPOPT_Social_Distancing.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Single_Shooting_obj_con_IPOPT_Vaccination.eps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Symbolic_IPOPT_Traj_Vaccination.eps" beforeDir="false" afterPath="$PROJECT_DIR$/Figures/Symbolic_IPOPT_Traj_Vaccination.eps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figures/Symbolic_IPOPT_error_Vaccination.eps" beforeDir="false" afterPath="$PROJECT_DIR$/Figures/Symbolic_IPOPT_error_Vaccination.eps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPOPT/Primal_Dual.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPOPT/Primal_Dual.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Integrators/Compare_sense.py" beforeDir="false" afterPath="$PROJECT_DIR$/Integrators/Compare_sense.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ODEs/SIR_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/ODEs/SIR_plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PMP/Multiple_Shooting_PMP.py" beforeDir="false" afterPath="$PROJECT_DIR$/PMP/Multiple_Shooting_PMP.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PMP/PMP_SIR_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPOPT/Primal_Dual_Multiple_Shooting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PMP/Untitled-Copy1.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PMP/Untitled.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PMP/test_Multiple_Shooting_PMP.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Parameters/Parameters_Isolation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Parameters/Parameters_Isolation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Parameters/Parameters_Social_Distancing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Parameters/Parameters_Social_Distancing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Parameters/Parameters_Vaccination_Flat.py" beforeDir="false" afterPath="$PROJECT_DIR$/Parameters/Parameters_Vaccination.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plot_tools/Collocation_Plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plot_tools/Collocation_Plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plot_tools/Contour_Objective.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plot_tools/SIR_plot_basic.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plot_tools/SIR_plot_basic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Shooting_Methods/Multiple_Shooting.py" beforeDir="false" afterPath="$PROJECT_DIR$/Shooting_Methods/Multiple_Shooting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Shooting_Methods/Multiple_Shooting_SQP.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Shooting_Methods/Simulate_All.py" beforeDir="false" afterPath="$PROJECT_DIR$/Shooting_Methods/Simulate_All.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Shooting_Methods/Single_Shooting.py" beforeDir="false" afterPath="$PROJECT_DIR$/Shooting_Methods/Single_Shooting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Shooting_Methods/Single_Shooting_SQP.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/log.opt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/thetas.nc" beforeDir="false" afterPath="$PROJECT_DIR$/data/thetas.nc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/u_plot.nc" beforeDir="false" afterPath="$PROJECT_DIR$/data/u_plot.nc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/x_plot.nc" beforeDir="false" afterPath="$PROJECT_DIR$/data/x_plot.nc" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="ProjectId" id="1mdsjReTjc4z3RHaBHweHjrAvB3" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Systembiologi og Biologiske Nettverk/Project_1" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Shooting_Methods" />
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Parameters" />
+      <recent name="C:\Users\jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Shooting_Methods" />
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Collocation" />
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Callbacks" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Callbacks" />
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Plot_tools" />
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject" />
+      <recent name="C:\Users\Jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Examples" />
+      <recent name="C:\Users\jonas\OneDrive - NTNU\Kybernetikk og Robotikk\Numerical Optimal Control\pythonProject\Integrators" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.Direct_Collocation_IPOPT">
+    <configuration name="Direct_Collocation" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/PycharmProjects/pythonProject/Collocation/Direct_Collocation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Direct_Collocation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\Jonas\PycharmProjects\pythonProject\Collocation\Direct_Collocation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Direct_Collocation_IPOPT" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Collocation" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Collocation/Direct_Collocation_IPOPT.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Iteration_plot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Plot_tools" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Plot_tools/Iteration_plot.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Multiple_Shooting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Shooting_Methods" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Shooting_Methods/Multiple_Shooting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Primal_Dual_Multiple_Shooting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IPOPT" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IPOPT/Primal_Dual_Multiple_Shooting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Single_Shooting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\jonas\anaconda3\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Shooting_Methods" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Shooting_Methods/Single_Shooting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="pythonProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.Direct_Collocation" />
+      <item itemvalue="Python.Iteration_plot" />
+      <item itemvalue="Python.Multiple_Shooting" />
+      <item itemvalue="Python.Primal_Dual_Multiple_Shooting" />
+      <item itemvalue="Python.Single_Shooting" />
+      <item itemvalue="Python.Direct_Collocation_IPOPT" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.Direct_Collocation_IPOPT" />
+        <item itemvalue="Python.Primal_Dual_Multiple_Shooting" />
+        <item itemvalue="Python.Multiple_Shooting" />
+        <item itemvalue="Python.Single_Shooting" />
+        <item itemvalue="Python.Iteration_plot" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dc3ce079-40bc-4825-9f51-d70c4e61eb79" name="Default Changelist" comment="" />
+      <created>1609834939552</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1609834939552</updated>
+      <workItem from="1609834941363" duration="18453000" />
+      <workItem from="1609918450799" duration="16553000" />
+      <workItem from="1610009009492" duration="10809000" />
+      <workItem from="1610041879708" duration="3389000" />
+      <workItem from="1610051116039" duration="639000" />
+      <workItem from="1610100688484" duration="4000" />
+      <workItem from="1610100856627" duration="2141000" />
+      <workItem from="1610103067648" duration="2118000" />
+      <workItem from="1610105211032" duration="2883000" />
+      <workItem from="1610110918801" duration="11009000" />
+      <workItem from="1610193218270" duration="1998000" />
+      <workItem from="1610300004360" duration="6944000" />
+      <workItem from="1610353962266" duration="1484000" />
+      <workItem from="1610355787228" duration="19000" />
+      <workItem from="1610358743602" duration="745000" />
+      <workItem from="1610359508258" duration="11308000" />
+      <workItem from="1610374490480" duration="12146000" />
+      <workItem from="1610403423255" duration="3570000" />
+      <workItem from="1610442361180" duration="4818000" />
+      <workItem from="1610449073768" duration="6411000" />
+      <workItem from="1610466258353" duration="3548000" />
+      <workItem from="1610469955732" duration="7026000" />
+      <workItem from="1610528462249" duration="28654000" />
+      <workItem from="1610612567922" duration="19215000" />
+      <workItem from="1610700394717" duration="4457000" />
+      <workItem from="1610704906378" duration="2641000" />
+      <workItem from="1610709357539" duration="2075000" />
+      <workItem from="1610711902923" duration="3128000" />
+      <workItem from="1610716431934" duration="3748000" />
+      <workItem from="1610720240245" duration="791000" />
+      <workItem from="1610721228810" duration="2808000" />
+      <workItem from="1610724082861" duration="2684000" />
+      <workItem from="1610833033867" duration="1267000" />
+      <workItem from="1610834332327" duration="5029000" />
+      <workItem from="1610884140137" duration="16735000" />
+      <workItem from="1610958009647" duration="2185000" />
+      <workItem from="1610961051688" duration="8333000" />
+      <workItem from="1610973428616" duration="944000" />
+      <workItem from="1610974469150" duration="14000" />
+      <workItem from="1611054507058" duration="343000" />
+      <workItem from="1611060119516" duration="629000" />
+      <workItem from="1611060831281" duration="77000" />
+      <workItem from="1611061518774" duration="8559000" />
+      <workItem from="1611137246941" duration="22667000" />
+      <workItem from="1611228677520" duration="5496000" />
+      <workItem from="1611235093709" duration="7630000" />
+      <workItem from="1611254013268" duration="2104000" />
+      <workItem from="1611256196066" duration="1262000" />
+      <workItem from="1611338828652" duration="9544000" />
+      <workItem from="1611419758084" duration="9143000" />
+      <workItem from="1611439282793" duration="2910000" />
+      <workItem from="1611517211888" duration="3365000" />
+      <workItem from="1611522140290" duration="94000" />
+      <workItem from="1611522246144" duration="770000" />
+      <workItem from="1611523039941" duration="3892000" />
+      <workItem from="1611568902064" duration="20411000" />
+      <workItem from="1611651826368" duration="96000" />
+      <workItem from="1611669405673" duration="607000" />
+      <workItem from="1611743475951" duration="3844000" />
+      <workItem from="1611782388740" duration="3308000" />
+      <workItem from="1611826125531" duration="4599000" />
+      <workItem from="1611918960092" duration="10999000" />
+      <workItem from="1612005026979" duration="3823000" />
+      <workItem from="1612025997350" duration="3267000" />
+      <workItem from="1612109718680" duration="269000" />
+      <workItem from="1612110143484" duration="1334000" />
+      <workItem from="1612120793230" duration="2032000" />
+      <workItem from="1612202269606" duration="710000" />
+      <workItem from="1612214478786" duration="658000" />
+      <workItem from="1612378502386" duration="204000" />
+      <workItem from="1612434721484" duration="7967000" />
+      <workItem from="1612467766337" duration="2181000" />
+      <workItem from="1612474018095" duration="22148000" />
+      <workItem from="1612699819615" duration="1222000" />
+      <workItem from="1612814339627" duration="34000" />
+      <workItem from="1612883812776" duration="3119000" />
+      <workItem from="1613393261934" duration="380000" />
+      <workItem from="1613402712299" duration="2468000" />
+      <workItem from="1613476340094" duration="5300000" />
+      <workItem from="1613835364022" duration="136000" />
+      <workItem from="1613948716775" duration="1190000" />
+      <workItem from="1613995337919" duration="50000" />
+      <workItem from="1614195485215" duration="339000" />
+      <workItem from="1614196405869" duration="1671000" />
+      <workItem from="1614258890965" duration="12087000" />
+      <workItem from="1614458869472" duration="698000" />
+      <workItem from="1614605957963" duration="10000" />
+      <workItem from="1614677084138" duration="2961000" />
+      <workItem from="1614770189033" duration="134000" />
+      <workItem from="1614780901565" duration="3328000" />
+      <workItem from="1614942746091" duration="163000" />
+      <workItem from="1615125197407" duration="2160000" />
+      <workItem from="1615132736810" duration="7997000" />
+      <workItem from="1615278189535" duration="14942000" />
+      <workItem from="1615501900894" duration="20000" />
+      <workItem from="1615936219939" duration="4916000" />
+      <workItem from="1615971282781" duration="805000" />
+      <workItem from="1616159404533" duration="14549000" />
+      <workItem from="1616244026009" duration="3735000" />
+      <workItem from="1616419128419" duration="6470000" />
+      <workItem from="1616541952242" duration="11250000" />
+      <workItem from="1616663993214" duration="16663000" />
+      <workItem from="1616759638065" duration="655000" />
+      <workItem from="1616766211878" duration="3121000" />
+      <workItem from="1616769556210" duration="8811000" />
+    </task>
+    <task id="LOCAL-00001" summary="Plots">
+      <created>1614781802472</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1614781802472</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Plots" />
+    <option name="LAST_COMMIT_MESSAGE" value="Plots" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Examples/Sensitivity_NLP_Example.py</url>
+          <line>244</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Integrators/Autodiff_SIR_Sensitivity.py</url>
+          <line>112</line>
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Integrators/True_Sense_Trajectory.py</url>
+          <line>21</line>
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Parsing/IPOPT_Parse.py</url>
+          <line>34</line>
+          <option name="timeStamp" value="92" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Callbacks/IPOPT_Symbolical.py</url>
+          <line>44</line>
+          <option name="timeStamp" value="110" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="u_opt" language="Python" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/pythonProject$Direct_Collocation__1_.coverage" NAME="Direct_Collocation (1) Coverage Results" MODIFIED="1611052669099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Collocation" />
+    <SUITE FILE_PATH="coverage/pythonProject$Direct_Collocation_IPOPT.coverage" NAME="Direct_Collocation_IPOPT Coverage Results" MODIFIED="1616787080347" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Collocation" />
+    <SUITE FILE_PATH="coverage/pythonProject$Single_Shooting_SQP.coverage" NAME="Single_Shooting_SQP Coverage Results" MODIFIED="1615278482114" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Shooting_Methods" />
+    <SUITE FILE_PATH="coverage/pythonProject$Primal_Dual.coverage" NAME="Primal_Dual Coverage Results" MODIFIED="1610661028819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IPOPT" />
+    <SUITE FILE_PATH="coverage/pythonProject$Single_Shooting_SQP_2.coverage" NAME="Single_Shooting_SQP_2 Coverage Results" MODIFIED="1615278720199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Shooting_Methods" />
+    <SUITE FILE_PATH="coverage/pythonProject$main.coverage" NAME="Direct_Collocation Coverage Results" MODIFIED="1609921975495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonProject$Collocation_Sensitivity.coverage" NAME="Collocation_Sensitivity Coverage Results" MODIFIED="1609930308350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonProject$Contour_Objective.coverage" NAME="Contour_Objective Coverage Results" MODIFIED="1610470150079" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plot_tools" />
+    <SUITE FILE_PATH="coverage/pythonProject$Autodiff_SIR_Sensitivity__1_.coverage" NAME="Autodiff_SIR_Sensitivity (1) Coverage Results" MODIFIED="1610102771055" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Integrators" />
+    <SUITE FILE_PATH="coverage/pythonProject$SIR_plot_basic.coverage" NAME="SIR_plot_basic Coverage Results" MODIFIED="1615134989818" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plot_tools" />
+    <SUITE FILE_PATH="coverage/pythonProject$Multiple_Shooting.coverage" NAME="Multiple_Shooting Coverage Results" MODIFIED="1613478224700" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Shooting_Methods" />
+    <SUITE FILE_PATH="coverage/pythonProject$Primal_Dual_Multiple_Shooting.coverage" NAME="Primal_Dual_Multiple_Shooting Coverage Results" MODIFIED="1616774958840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IPOPT" />
+    <SUITE FILE_PATH="coverage/pythonProject$Variational_Autodiff_Comparison.coverage" NAME="Variational_Autodiff_Comparison Coverage Results" MODIFIED="1610114408770" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plot" />
+    <SUITE FILE_PATH="coverage/pythonProject$Sensitivity_NLP_Example__1_.coverage" NAME="Sensitivity_NLP_Example (1) Coverage Results" MODIFIED="1609930142329" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Examples" />
+    <SUITE FILE_PATH="coverage/pythonProject$IPOPT_12.coverage" NAME="IPOPT_12 Coverage Results" MODIFIED="1611049755808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Parsing" />
+    <SUITE FILE_PATH="coverage/pythonProject$Variational_SIR.coverage" NAME="Variational_SIR Coverage Results" MODIFIED="1610025995086" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Integrators" />
+    <SUITE FILE_PATH="coverage/pythonProject$Simulate_All.coverage" NAME="Simulate_All Coverage Results" MODIFIED="1616542000879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Shooting_Methods" />
+    <SUITE FILE_PATH="coverage/pythonProject$Compare_sense.coverage" NAME="Compare_sense Coverage Results" MODIFIED="1613647922625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Integrators" />
+    <SUITE FILE_PATH="coverage/pythonProject$True_Sense_Trajectory.coverage" NAME="True_Sense_Trajectory Coverage Results" MODIFIED="1610302734723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Integrators" />
+    <SUITE FILE_PATH="coverage/pythonProject$Polynomial_plot.coverage" NAME="Polynomial_plot Coverage Results" MODIFIED="1612532730040" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Lagrange_Polynomials" />
+    <SUITE FILE_PATH="coverage/pythonProject$Single_Shooting.coverage" NAME="Single_Shooting Coverage Results" MODIFIED="1616767076318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Shooting_Methods" />
+    <SUITE FILE_PATH="coverage/pythonProject$SIR_plot.coverage" NAME="SIR_plot Coverage Results" MODIFIED="1615133932892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ODEs" />
+    <SUITE FILE_PATH="coverage/pythonProject$Autodiff_SIR_Sensitivity.coverage" NAME="Autodiff_SIR_Sensitivity Coverage Results" MODIFIED="1613641175281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Integrators" />
+    <SUITE FILE_PATH="coverage/pythonProject$Parameters_Social_Distancing.coverage" NAME="Parameters_Social_Distancing Coverage Results" MODIFIED="1615135970405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Parameters" />
+    <SUITE FILE_PATH="coverage/pythonProject$CasADI_Collocation_Callback.coverage" NAME="CasADI_Collocation_Callback Coverage Results" MODIFIED="1614259895820" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Callbacks" />
+    <SUITE FILE_PATH="coverage/pythonProject$Variational_SIR_Sensitivity__1_.coverage" NAME="Variational_SIR_Sensitivity (1) Coverage Results" MODIFIED="1610302280318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Integrators" />
+    <SUITE FILE_PATH="coverage/pythonProject$Primal_Dual_Cas.coverage" NAME="Primal_Dual_Cas Coverage Results" MODIFIED="1616195034918" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IPOPT" />
+    <SUITE FILE_PATH="coverage/pythonProject$Parallel_processing_IPOPT.coverage" NAME="Parallel_processing_IPOPT Coverage Results" MODIFIED="1611236124035" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Callbacks" />
+    <SUITE FILE_PATH="coverage/pythonProject$Variational_SIR_Sensitivity.coverage" NAME="Variational_SIR_Sensitivity Coverage Results" MODIFIED="1610028575778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Integrators" />
+    <SUITE FILE_PATH="coverage/pythonProject$ParseTest.coverage" NAME="ParseTest Coverage Results" MODIFIED="1610362895787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Parsing" />
+    <SUITE FILE_PATH="coverage/pythonProject$Multiple_Shooting_PMP.coverage" NAME="Multiple_Shooting_PMP Coverage Results" MODIFIED="1616424966633" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PMP" />
+    <SUITE FILE_PATH="coverage/pythonProject$costplot.coverage" NAME="costplot Coverage Results" MODIFIED="1612569334304" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plot_tools" />
+    <SUITE FILE_PATH="coverage/pythonProject$CustomCallback.coverage" NAME="CustomCallback Coverage Results" MODIFIED="1611050400008" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Callbacks" />
+    <SUITE FILE_PATH="coverage/pythonProject$TableParse_Example.coverage" NAME="TableParse_Example Coverage Results" MODIFIED="1610373248312" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Parsing" />
+    <SUITE FILE_PATH="coverage/pythonProject$Direct_Collocation.coverage" NAME="Direct_Collocation Coverage Results" MODIFIED="1610463545730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Collocation" />
+  </component>
+</project>

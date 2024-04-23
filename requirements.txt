@@ -1,0 +1,7 @@
+casadi==3.6.5
+matplotlib==3.8.3
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.0
+tqdm==4.66.2
+xarray==2024.3.0
